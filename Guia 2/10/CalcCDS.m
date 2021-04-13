@@ -1,5 +1,5 @@
 function [cds_ac, cds_rc, cds_aa, cds_ra] = CalcCDS(a,b)
-%MostrarCDS Calcula la cantidad de cifras decimales significativas
+% CalcCDS Calcula la cantidad de cifras decimales significativas
 %   Input:
 %       a: valor exacto
 %       b: aproximación
