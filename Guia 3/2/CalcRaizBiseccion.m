@@ -3,7 +3,7 @@ function [x, f_x, n, e] = CalcRaizBiseccion(f, a, b, c)
 %   [a,b] especificado, con tolerancia c, mediante el método de
 %   bisección.
 %
-% Syntax: [x, n, e] = CalcRaizBiseccion(f, a, b, c)
+% Syntax: [x, f_x, n, e] = CalcRaizBiseccion(f, a, b, c)
 %
 % Input:
 %   f: string de función a evaluar
