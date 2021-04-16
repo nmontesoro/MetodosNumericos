@@ -32,11 +32,7 @@ function [x, f_x, n, e] = CalcRaizPosFalsa2(f, a, b, c)
 
         opt.a = a;
         opt.b = b;
-        opt.f_a = f(opt.a);
-        opt.f_b = f(opt.b);
-        opt.x = (opt.a*opt.f_b - opt.b*opt.f_a)/(opt.f_b - opt.f_a);
         opt.x_a = 9e10;
-        opt.f_x = f(opt.x);
         opt.n = 1;
     
         while 1
@@ -52,17 +48,18 @@ function [x, f_x, n, e] = CalcRaizPosFalsa2(f, a, b, c)
             if c(opt)
                 break
             end
-    
-            if opt.f_x > 0
+
+            if sign(opt.f_a) ~= sign(opt.f_x)
                 opt.b = opt.x;
             else
                 opt.a = opt.x;
             end
+
             opt.n = opt.n + 1;
         end
         
         x = opt.x;
         f_x = opt.f_x;
-        n = opt.n - 1;
+        n = opt.n;
         e = abs(x - opt.x_a);
     end

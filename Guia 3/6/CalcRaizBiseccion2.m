@@ -30,9 +30,7 @@ function [x, f_x, n, e] = CalcRaizBiseccion2(f, a, b, c)
 
         opt.a = a;
         opt.b = b;
-        opt.x = (a + b) / 2;
         opt.x_a = 9e10;
-        opt.f_x = f(opt.x);
         opt.n = 1;
     
         while 1
@@ -47,7 +45,7 @@ function [x, f_x, n, e] = CalcRaizBiseccion2(f, a, b, c)
                 break
             end
     
-            if opt.f_x > 0
+            if sign(opt.f_x) ~= sign(f(opt.a))
                 opt.b = opt.x;
             else
                 opt.a = opt.x;
