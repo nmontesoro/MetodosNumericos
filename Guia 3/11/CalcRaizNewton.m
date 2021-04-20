@@ -1,8 +1,8 @@
-function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c)
+function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c, m)
 %CalcRaizNewton - Calcula la raíz de una función f mediante el método
 %   de Newton-Raphson, hasta que se cumpla la condición c
 %
-% Syntax: [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c)
+% Syntax: [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c, m)
 %
 % Cuidado! No comprueba la convergencia antes de empezar a iterar. Debe
 %   comprobarse manualmente antes, o limitarse mediante c utilizando opt.n.
@@ -18,6 +18,8 @@ function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c)
 %           opt.f_x: f(x)
 %           opt.g_x: g(x)
 %           opt.n: índice de la iteración actual (comienza en 1)
+%   m: (opcional) multiplicidad de la raíz a calcular, para utilizar la fórmula
+%       acelerada para raíces múltiples
 %
 % Output:
 %   x: raíz encontrada
@@ -31,12 +33,21 @@ function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c)
     opt.g_x = g(x_0);
     opt.n = 1;
 
+    if ~exist('m', 'var')
+        m = 0;
+    end
+
     while 1
         if opt.n ~= 1
             opt.x_a = opt.x;
         end
 
-        opt.x = opt.x_a - opt.f_x / opt.g_x;
+        if m
+            opt.x = opt.x_a - m * opt.f_x / opt.g_x;
+        else
+            opt.x = opt.x_a - opt.f_x / opt.g_x;
+        end
+
         opt.f_x = f(opt.x);
         opt.g_x = g(opt.x);
 
