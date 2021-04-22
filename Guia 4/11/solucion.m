@@ -17,7 +17,7 @@ b = [ 12;
 X = A\b;
 
 dA = A.*0.01;
-db = [0;0;0]; % No varía
+db = [0; 0; 0]; % No varía
 
 err = CalcCotaErrorRelativo(A, dA, b, db)
 
