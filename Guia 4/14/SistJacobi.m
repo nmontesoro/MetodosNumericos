@@ -25,6 +25,10 @@ function [X, n] = SistJacobi(A, X, b, c)
     opt.X_a = X;
     opt.n = 1;
 
+    if ~ConvergeJacobi(opt.B)
+        error('El sistema diverge - cambiar filas A?');
+    end
+
     while 1
         if opt.n ~= 1
             opt.X_a = opt.X;

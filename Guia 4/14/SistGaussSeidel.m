@@ -25,6 +25,10 @@ function [X, n] = SistGaussSeidel(A, X, b, c)
         opt.c = CalcMatrizCGaussSeidel(A, b);
         opt.X_a = X;
         opt.n = 1;
+
+        if ~ConvergeGaussSeidel(opt.B)
+            error('El sistema diverge - cambiar filas A?');
+        end
     
         while 1
             if opt.n ~= 1
