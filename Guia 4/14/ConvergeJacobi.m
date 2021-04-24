@@ -16,7 +16,7 @@ function c = ConvergeJacobi(B)
     c = true;
 
     if norm(B, inf) >= 1
-        if max(abs(eig(B))) >= 1
+        if RadioEspectral(B) >= 1
             c = false;
         end
     end
