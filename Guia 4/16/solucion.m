@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 % Solución:
-=======
-Solución:
->>>>>>> 250ae99fa026fe32e36c3b30e94ba2a85d684968
 % 1)
 %    Matriz original:
 %     0.5000    0.2500         0         0
