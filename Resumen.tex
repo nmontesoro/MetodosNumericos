@@ -1,0 +1,1079 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{Métodos numéricos}
+\author{Nazareno Montesoro}
+\date{Primer cuatrimestre - 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+Un \textbf{método numérico} es un procedimiento (algoritmo) mediante el cual se
+obtiene (casi siempre de manera aproximada) la solución numérica a ciertos
+problemas, realizando evaluaciones de funciones y operaciones aritméticas
+elementales. Los \textbf{métodos analíticos}, en cambio, permiten obtener
+resultados exactos, pero a veces limitados.
+
+Se adopta \textbf{Matlab} como lenguaje de trabajo, por su facilidad de uso,
+su utilización durante el resto de la carrera, y porque es utilizado por
+universidades, empresas e industrias. Es un sistema interactivo, cuyo tipo de 
+dato básico es la \textbf{matriz}
+
+\subsection{Comandos útiles de Matlab}
+
+\begin{itemize}
+    \item \verb|who| muestra los nombres de todas las variables actuales.
+    \item \verb|whos| muestra los nombres \textit{y los tipos de dato}.
+    \item \verb|clear| borra todas las variables.
+    \item \verb|path| y \verb|cd| muestran y cambian el directorio actual.
+    \item \verb|what| muestra el contenido del directorio.
+    \item \verb|help| muestra la ayuda de algún comando.
+\end{itemize}
+
+\section{Fuentes de error}
+
+Las fuentes de error posibles en un modelo matemático son:
+
+\begin{itemize}
+    \item Datos (ruido, instrumentales)
+    \item Variables consideradas
+    \item Definición del modelo
+    \item Representación de los números reales en la computadora (definen la
+        \textit{precisión de cálculo})
+    \begin{itemize}
+        \item Naturaleza discreta (limitados)
+        \item Errores de redondeo
+        \item Acumulación de errores
+        \item Errores de desbordamiento
+    \end{itemize}
+    \item Algoritmos de métodos numéricos (definen la
+        \textit{confiabilidad de los resultados})
+    \begin{itemize}
+        \item Errores de aproximación
+        \item Algoritmos de cálculo inestables
+    \end{itemize}
+    \item Problemas mal condicionados
+\end{itemize}
+
+\subsection{Representación de los números}
+
+Hay distintas formas de representar un mismo número. Normalmente utilizamos 
+la representación decimal (base 10), pero las computadoras sólo ven la
+información en términos de unos y ceros. Por eso, los valores que se almacenan
+en memoria pasan por un cambio de base.
+
+La \textbf{representación decimal} o en base 10 utiliza dígitos del 0 al 9, la
+\textbf{representación binaria} usa 0 y 1, y la 
+\textbf{representación hexadecimal} usa dígitos entre 0 y F (0, ..., 9, A, ..., F).
+
+\subsubsection{Conversión de decimal a binario}
+
+\begin{itemize}
+    \item La parte entera se divide sucesivamente por 2, y se toman los restos.
+    \item Los decimales se obtienen multiplicando el número sucesivamente por 2,
+        y extrayendo su parte entera.
+\end{itemize}
+
+Por ejemplo, para convertir $13.375_{10}$ a binario:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+    Número & Cociente & Resto \\
+    13     & 6        & 1     \\
+    6      & 3        & 0     \\
+    3      & 1        & 1     \\
+\end{tabular}
+\end{table}
+
+\begin{align*}
+    0.375 \cdot 2 &= 0.750 \\
+    0.750 \cdot 2 &= 1.50 \\
+    0.500 \cdot 2 &= 1.00 \\
+    0.000 \cdot 2 &= 0.00
+\end{align*}
+
+Entonces $13.375_{10} = 13_{10} + 0.375_{10} = 1\ 101.011_{2}$.
+
+No siempre es posible encontrar la conversión exacta. Algunos números decimales
+directamente no se pueden representar en binario sin recurrencia.
+
+\subsubsection{Conversión de binario a decimal}
+
+\begin{equation*}
+    1\ 101.011_{2} = 1\cdot2^3 + 1\cdot2^2 + 0\cdot2^1 + 1\cdot2^0 + 
+    0\cdot2^{-1} + 1\cdot2^{-2} + 1\cdot2^{-3}
+\end{equation*}
+
+\subsubsection{Representación de enteros binarios sin signo}
+
+Con $n$ bits se pueden representar los números enteros en el rango $[0, 2^n-1]$.
+Una operación con dos números de $n$ bits podría exceder la cantidad de bits
+necesaria para representarlo. Por ejemplo: con $n=4$ bits,
+$15_{10} + 1_{10} = 1111_{2} + 0001_{2} = 10000_{2}$.
+
+\subsubsection{Representación de números enteros binarios con signo y 
+complemento a uno}
+
+Un bit es destinado al signo. Con $n$ bits se pueden representar los números
+enteros en el rango $[-2^{n-1}-1,\ 2^{n-1}-1]$.
+
+\subsubsection{Representación de números enteros binarios con signo y 
+complemento a dos}
+
+El primer bit indica el signo. Para positivos, el resto de los bits indica su
+magnitud. Para negativos, el resto de los dígitos representan el complemento de
+su magnitud, $+1$. Por ejemplo:
+
+\begin{equation*}
+    7_{10} = 0111_{2},\ -7_{10} = \text{compl}_{2} \left(0111\right) + 1_{2}
+    = 1000_{2} + 1_{2} = 1001_{2}
+\end{equation*}
+
+Con $n$ bits se pueden representar los números enteros en el rango
+$[-2^{n-1},\ 2^{n-1}-1]$.
+
+\subsubsection{Representación de números enteros en exceso Z}
+
+La representación binaria de un número en exceso se obtiene sumando $Z$
+($2^{n-1}$ o $2^{n-1}-1$) al número decimal y transformando el resultado a
+binario. Por ejemplo, la representación en exceso $Z=32$ de $16$ es $48$; de 
+$-22$ es $10$; de $-16$ es $16$.
+
+El rango que se puede representar con $n$ bits, en exceso $2^{n-1}$, es
+$[-2^{n-1},\ 2^{n-1}-1]$.
+
+\subsubsection{Representación de números reales}
+
+Dado que en los números reales existen dígitos decimales entre los dígitos, no
+se puede establecer un máximo y un mínimo. Entra en juego la \textbf{precisión}.
+
+Las computadoras representan los números reales en notación científica 
+normalizada, anulando la parte entera. Por ejemplo, 
+
+\begin{equation*}
+    6\ 789.213\times10^9 = 0.678\ 921\ 3\times10^{13} = 
+    100\ 100.11\times2^7 = 0.100\ 100\ 11\times2^{13}
+\end{equation*}
+
+Los números reales se pueden representar como $0.m\times10^e$ en decimal, o como
+$0.m\times2^e$ en binario. $m$ se denomina \textbf{mantisa}, y $e$ es el 
+exponente.
+
+Tanto la mantisa como el exponente son valores enteros, y pueden ser positivos o
+negativos.
+
+En una representación simple de números reales de 32 bits, se utiliza
+
+\begin{itemize}
+    \item 1 bit para el signo
+    \item 23 bits para la mantisa ($t$: precisión)
+    \item 1 bit para el signo del exponente
+    \item 7 bits para el exponente
+\end{itemize}
+
+En este caso, la precisión no va a superar los 24 bits. La precisión máxima es
+$2^{24}\approx10^7$, es decir, 7 dígitos decimales.
+
+\subsubsection{Representación IEEE}
+
+El IEEE es el Instituto de Ingeniería Eléctrica y Electrónica. Estableció el
+estándar IEEE754 para la representación de números reales en base 2. De 
+izquierda a derecha:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+Bits totales & Bits signo mantisa & Bits exponente & Bits mantisa \\
+16           & 1                  & 4              & 11           \\
+32           & 1                  & 8              & 23           \\
+64           & 1                  & 11             & 52          
+\end{tabular}
+\end{table}
+
+El exponente se guarda con exceso $Z=2^{n-1}-1$ (por ejemplo, para 32 bits, el 
+exponente se guardaría con exceso 127). Los números son normalizados como $1.m$.
+Por ejemplo, con 16 bits totales:
+
+\begin{equation*}
+0.0121_{10} = 0.0000\ 0011\ 0001\ 1000\ 1111 = 0.1100\ 0110\ 0011\ 11\times2^{-6}
+\end{equation*}
+
+Entonces el bit de signo es 0 por ser positivo. El exponente se guarda con 
+exceso $Z=2^{4-1}-1=7$, entonces $-6_{10} \rightarrow (-6+7)_{10} = 0001_{2}$.
+Por último, la mantisa es $1\ 0001\ 1000\ 1111$. Finalmente, el número $0.0121$
+según la representación IEEE754 queda $0000\ 1100\ 0110\ 0011$. Nótese que no se
+está guardando exactamente $0.0121$, ya que este número recurre en binario.
+
+En este estándar también se definen ciertos valores especiales:
+
+\begin{itemize}
+    \item $e = -1023,\ m=0\ \equiv\ \pm 0$
+    \item $e = -1023,\ m\neq 0\ \equiv\ \pm(0+f)2^{e}$ \emph{ (preguntar qué es
+    $f$)}
+    \item $e = 1024,\ m=0\ \equiv\ \pm$inf
+    \item $e = 1024,\ m\neq0\ \equiv\ $NaN
+\end{itemize}
+
+\subsection{Algunos valores en Matlab}
+
+Los números en punto flotante tienen un espacio discreto, un máximo y un mínimo.
+\textit{eps} es la distancia de un número al siguiente en punto flotante.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+        & Binario                        & Decimal \\
+eps     & $2^{-52}$                      & $2.2204\times10^{-16}$  \\
+realmin & $2^{-1022}$                    & $2.2251\times10^{-308}$ \\
+realmax & $(2-\text{eps})\times2^{1023}$ & $1.7977\times10^{308}$
+\end{tabular}
+\end{table}
+
+Cuando un número supera \verb|realmax| se produce un \textit{overflow}, y queda
+representado como \verb|inf|. Cuando un número es menor que \verb|realmin|, se
+produce un \textit{underflow}, y se redondea a 0.
+
+Un ejemplo de \textit{overflow} (exceso) podría ser:
+
+\begin{lstlisting}[language=Matlab]
+x = 1;
+while x + x > x
+    x = 2*x;
+end
+\end{lstlisting}
+
+El resultado será: 1024 valores de \verb|x|, donde los últimos dos son 
+$2^{1023}\approx$\verb|realmax / 2| e \verb|Inf| ($\infty$).
+
+Un ejemplo de \textit{underflow} (anulación) podría ser:
+
+\begin{lstlisting}[language=Matlab]
+x = 1;
+while x + x > x
+    x = x / 2;
+end
+\end{lstlisting}
+
+El resultado será: 1075 valores de \verb|x|, donde los últimos dos son 
+\verb|eps * realmin| y 0. 
+
+\subsection{Errores de redondeo}
+
+La representación de un número real se denomina \textit{representación en coma 
+flotante}. A cada valor $x\ \in\ \mathbb{R}$ se le asocia un número de máquina 
+mediante una función $fl(x)$. La diferencia entre $x$ y el número obtenido 
+$x_{fl}$ se denomina \textbf{error de redondeo}.
+
+\begin{equation*}
+    fl(x) = x_{fl} = x + \delta,\ |\delta| \leq \text{eps = precisión} = 2^{-52}
+\end{equation*}
+
+Un ejemplo podría ser:
+
+\begin{lstlisting}[language=Matlab]
+x = 1;
+while 1 + x > 1
+    x = x / 2;
+end
+\end{lstlisting}
+
+El resultado serán 53 valores de \verb|x|, y los últimos dos son \verb|eps| y 
+\verb|eps / 2|.
+
+\subsection{Errores en las operaciones}
+
+Se producen por la acumulación de errores de redondeo y la anulación de dígitos 
+de precisión: se realiza la operación, se normaliza el resultado, se redondea
+el resultado, y se almacena el resultado en memoria. El error se propaga en
+operaciones sucesivas.
+
+\subsubsection{Pérdida de cifras significativas}
+
+Se produce al realizar substracciones entre números similares (cancelación
+substractiva). Por ejemplo: 
+
+\begin{equation*}
+    x = 0.3456842643,\ y = 0.3456704522,\ x - y = 1.38121000000102\times10^{-5}
+\end{equation*}
+
+Si se reduce a cinco dígitos,
+
+\begin{equation*}
+    \hat{x} = 0.34568,\ \hat{y} = 0.34567,\ \hat{x} - \hat{y} = 0.00001
+\end{equation*}
+
+Y el error relativo es 
+$\varepsilon = \frac{x - y - (\hat{x} - \hat{y})}{x-y}\approx27\%$.
+
+\subsection{Concepto de error}
+
+Dado un valor $x$ (generalmente desconocido) y una aproximación $\hat{x}$, se 
+definen:
+
+\begin{itemize}
+    \item Error absoluto: la distancia entre dos valores.
+        $E_{\text{abs}} = |x-\hat{x}|$
+    \item Error relativo: una porción del valor exacto.
+        $E_{\text{rel}} = \frac{|x-\hat{x}|}{|x|}$
+    \item Cota de error: máximo valor del error. Es un $k\geq0$ tal que 
+        $|E|\leq k$.
+\end{itemize}
+
+\subsection{Cifras significativas en una aproximación}
+
+Al evaluar un error, se llaman cifras significativas a las que se consideran
+ciertas. Se dice que $\hat{x}$ se aproxima a $x$ con $d$ cifras decimales
+significativas (CDS), si $d$ es el mayor entero no negativo tal que 
+$E<10^{-d}$ (considerando corte), o que $E<5\times10^{-(d+1)}$ (por 
+aproximación). Se puede usar $E_{\text{abs}}$ o $E_{\text{rel}}$ según lo 
+requiera el ejercicio.
+
+Si $d$ es mayor o igual que la cantidad de dígitos utilizados para la 
+representación, se produce la pérdida de cifras decimales significativas 
+(cancelación).
+
+\section{Métodos iterativos}
+
+En general los métodos numéricos utilizan procesos repetitivos para obtener un 
+resultado. Consisten en sustituir reiteradamente un valor por el resultado 
+de aplicarle una fórmula o función. A este proceso se lo denomina 
+\textit{iteración}. Se requiere una fórmula o función $f(x)$ y un valor de 
+partida $x_0$.
+
+En las aproximaciones por procesos iterativos, la sucesión de valores 
+$x_0,\ x_1,\ \cdots,\ x_n$ puede ser infinita, tendiendo o no a un valor de
+interés. Cuando la sucesión tiende a dicho valor, se dice que es 
+\textit{convergente}. La velocidad de convergencia se denomina 
+\textit{orden de convergencia} y depende del método.
+
+\subsection{Convergencia}
+
+Si $r$ es la respuesta a un problema y $x_i$ y $x_{i+1}$ los valores calculados
+en las iteraciones $i$ e $i+1$, respectivamente, se define
+
+\begin{itemize}
+    \item Error absoluto de truncamiento en la iteración $i$, $E_i = |r-x_i|$.
+    \item Error absoluto de truncamiento en la iteración $i+1$, 
+        $E_{i+1} = |r-x_{i+1}|$.
+    \item Convergencia, $x_{i\to\infty}\to r\ \equiv\ \lim_{i\to\infty}E_i=0$.
+    \item Orden de convergencia: si $x_i\to r\ \Rightarrow\ |E_{i+1}|<|E_i|$.
+    \begin{itemize}
+        \item Si $h = |x_{i+1} - x_{i}|$ y la relación se puede expresar como
+            $|E_{i+1}| = k|E_i|$ con $0<k<1$, se dice que la convergencia es
+            lineal $O(h)$.
+        \item Si $|E_{i+1}| = k|E_i|^n$ la convergencia es de orden $n$ $O(h^n)$.
+    \end{itemize}
+\end{itemize}
+
+Si $r$ se desconoce, el error $|E_{i+1}|$ se evalúa como 
+$|E_{i+1}| = |x_{i+1} - x_i| < |r - x_{i+1}|$.
+
+\subsection{Algoritmos inestables}
+
+Un algoritmo es inestable cuando los errores de redondeo se acumulan, degradando
+al resultado final.
+
+Se dice que un problema está mal condicionado cuando la solución es muy sensible
+a pequeños cambios en las variables de entrada (que pueden ser introducidos al 
+resolver el problema mediante la computadora).
+
+\section{Solución de ecuaciones no lineales}
+
+Un número $\alpha$ se dice raíz de la ecuación $f(x)$ si $f(\alpha) = 0$.
+Los métodos numéricos para encontrar una raíz de una ecuación $f(x)$ son métodos
+iterativos que generarán una sucesión ${x_n},\ n=1,\ 2,\ \dots$ tal que 
+$\lim_{n\to\infty} x_n = \alpha$.
+
+\subsection{Métodos cerrados}
+
+Los métodos numéricos se denominan cerrados cuando necesitan conocer un 
+intervalo que encierre a la raíz.
+
+Si $f$ es una función continua en un intervalo $[a,\ b]$ y 
+$f(a) \cdot f(b) < 0$, por el Teorema del Valor Medio de Bolzano, existe al 
+menos un $\alpha\ \in\ [a,\ b]\ /\ f(\alpha)=0$.
+
+Las desventajas son:
+
+\begin{itemize}
+    \item Necesidad de conocer dos valores iniciales que encierren a la raíz.
+    \item En los extremos del intervalo la función debe tener signos opuestos.
+    \item En el intervalo puede existir más de una raíz.
+    \item Puede ser difícil diferenciar entre dos raíces muy cercanas.
+    \item Debido a errores de redondeo puede cambiar el signo de $f(x)$.
+    \item Se necesitan muchas iteraciones para llegar a la precisión deseada.
+\end{itemize}
+\subsubsection{Método de bisección}
+
+
+Consiste en dividir sucesivamente el intervalo $[a,\ b]$ por la mitad, hasta que
+la longitud del sub-intervalo que contiene a la raíz $\alpha$ sea menor que 
+alguna tolerancia especificada $\varepsilon$.
+
+Como ventajas, el error $\varepsilon$ se acota fácilmente, previendo la cantidad
+de iteraciones necesarias: $n\geq\frac{\log(b-a)-\log(\varepsilon)}{\log 2}$. Y 
+siempre converge. La desventaja es que la convergencia es muy lenta.
+
+El algoritmo es:
+
+\begin{itemize}
+    \item Si $f(a)*f(b) >= 0$
+    \begin{itemize}
+        \item Asignar $x_i = \frac{a+b}{2}$
+        \item Si no se cumple la condición de parada
+        \begin{itemize}
+            \item Si $f(x_i)\cdot f(a) > 0$
+            \begin{itemize}
+                \item Asignar $a = x_i$
+            \end{itemize}
+            \item Si no
+            \begin{itemize}
+                \item Asignar $b = x_i$
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+Ejemplo: calcular la raíz de $f(x) = \cos(x) + 1 - x$ en el intervalo $[1,\ 2]$.
+Se muestran las diez primeras iteraciones.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $a$    & $b$    & $x_i$  & $|x_i - x_{i-1}|$ \\\hline
+    0 & 1.0000 & 2.0000 & 1.5000 & -                 \\
+    1 & 1.0000 & 1.5000 & 1.2500 & 0.2500            \\
+    2 & 1.2500 & 1.5000 & 1.3750 & 0.1250            \\
+    3 & 1.2500 & 1.3750 & 1.3125 & 0.0625            \\
+    4 & 1.2500 & 1.3125 & 1.2813 & 0.0313            \\
+    5 & 1.2813 & 1.3125 & 1.2969 & 0.0156            \\
+    6 & 1.2813 & 1.2969 & 1.2891 & 0.0078            \\
+    7 & 1.2813 & 1.2891 & 1.2852 & 0.0039            \\
+    8 & 1.2813 & 1.2852 & 1.2832 & 0.0020            \\
+    9 & 1.2832 & 1.2852 & 1.2842 & 0.0010            \\
+   10 & 1.2832 & 1.2842 & 1.2837 & 0.0005
+\end{tabular}
+\end{table}
+
+\subsubsection{Método de Posición Falsa (Regula Falsi)}
+
+La aproximación $x_n$ a la raíz $\alpha$ es el punto de intersección de la recta
+que pasa por los puntos $(a, f(a))$ y $(b, f(b))$ con el eje $x$. Al reemplazar
+la curva por una recta, se obtiene una "posición falsa" de la raíz. También se
+lo conoce como \textit{método de interpolación lineal inversa}.
+
+\begin{equation*}
+    x_i = \frac{a\cdot f(b) - b\cdot f(a)}{f(b) - f(a)}
+\end{equation*}
+
+Converge más rápido que el método de bisección, pero no se puede prever el 
+número de iteraciones, y la longitud del subintervalo en general no tiende a 
+cero, por lo que uno de los extremos se aproxima a la raíz mientras que el otro
+permanece fijo.
+
+Ejemplo: ídem bisección, con $a=-2$ y $b=3$. Se muestran las 4 primeras
+iteraciones.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $a$     & $b$    & $x_i$  & $|x_i - x_{i-1}|$ \\\hline
+    0 & -2.0000 & 3.0000 & 0.5000 & -                 \\
+    1 & 0.3178  & 3.0000 & 1.6589 & 0.9471            \\
+    2 & 1.2649  & 3.0000 & 2.1325 & 0.0208            \\
+    3 & 1.2649  & 1.2857 & 1.2753 & 0.0023            \\
+    4 & 1.2834  & 1.2857 & 1.2846 & 0.0000            \\
+\end{tabular}
+\end{table}
+
+\subsection{Métodos abiertos}
+
+\begin{itemize}
+    \item Requieren de un solo valor inicial, en vez de un intervalo.
+    \item Como no hay un intervalo que encierre a la raíz, podría ocurrir que
+        las sucesiones generadas fueran divergentes.
+    \item Se pueden alejar de la raíz de interés, e ir hacia otra.
+    \item Cuando convergen lo hacen más rápidamente que los métodos cerrados.
+    \item Necesitan de intervención del usuario para despejes y cálculo de
+        derivadas.
+\end{itemize}
+
+\subsubsection{Método del punto fijo (o de las aproximaciones sucesivas)}
+
+\textit{Ver Teorema del punto fijo}.
+
+Dada una ecuación $f(x)=0$, si se puede transformar en otra equivalente del tipo
+$x = g(x)$ y si $\alpha$ es raíz de $f(x)$, entonces $\alpha = g(\alpha)$ se 
+dice un punto fijo de la función $g(x)$.
+
+Consiste en generar una sucesión ${x_n}$ que se define mediante la fórmula de 
+iteración $x_n = g(x_{n-1})$. La función $g(x)$ se denomina función de iteración
+de punto fijo.
+
+Es un método simple y posee condiciones para asegurar la convergencia (es 
+condición necesaria que $|g^\prime(x)|<1$ en cercanías de la raíz).
+
+Como desventajas, la convergencia depende de la magnitud de $g^\prime(x)$, se 
+necesita construir funciones $g(x)$ para iterar (y pueden existir varias, hay 
+que encontrar la adecuada).
+
+Ejemplo: raíz de $f(x) = 3x + \sin(x) - e^x$ con $x_0 = 0$.
+Se despeja $g(x) = \frac{1}{3}\cdot(e^x-\sin(x))$. Las primeras 4 iteraciones 
+son:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $x_i$  & $f(x_i)$ & $g(x_i)$ & $|x_i - x_{i-1}|$ \\\hline
+    0 & 0.0000 & -1.0000  & 0.3333   & -                 \\
+    1 & 0.3333 & -0.0684  & 0.3561   & 0.3333            \\
+    2 & 0.3561 & -0.0107  & 0.3597   & 0.0228            \\
+    3 & 0.3597 & -0.0018  & 0.3603   & 0.0036            \\
+    4 & 0.3603 & -0.0003  & 0.3604   & 0.0006            \\
+\end{tabular}
+\end{table}
+
+\subsubsection{Método de Newton-Raphson}
+
+Consiste en trazar una recta tangente a $f$ que pase por el punto 
+$(x_0, f(x_0))$, considerando una aproximación $x_1$ a la raíz al punto en el 
+cual dicha recta tangente corta al eje $x$. Es un caso especial del método de
+punto fijo, con $g(x) = x - \frac{f(x)}{f^\prime(x)}$. La función de iteración 
+es:
+
+\begin{equation*}
+    x_i = x_{i-1} - \frac{f(x_{n-1})}{f^\prime(x_{n-1})}
+\end{equation*}
+
+Converge como $|x_n - x_{n-1}| = \left| \frac{f(x)}{f^\prime(x)} \right|$. 
+Cuanto más grande sea $f^\prime(x)$ en la vecindad de la raíz, más rápida será
+la convergencia.
+
+Las condiciones necesarias para la convergencia (no suficientes - si no se 
+cumple alguna o todas igualmente podría converger) son:
+
+\begin{itemize}
+    \item $f^\prime(x)\neq0$ en todo $[a,\ b]$.
+    \item $f^{\prime\prime}(x)>0$ o $<0$ en todo $[a,\ b]$.
+\end{itemize}
+
+Las ventajas son la convergencia rápida y el hecho de que encuentra raíces 
+complejas (siempre y cuando el valor inicial sea también complejo). Como 
+desventaja, debe calcular la derivada, no se pueden prever la cantidad de 
+iteraciones y no siempre converge.
+
+Si $f(\alpha)=0,\ f^\prime(\alpha) = 0,\ \dots,\ f^{(M)}(\alpha) = 0$ se dice 
+que $\alpha$ es una raíz de orden $M$ de $f(x)$. Luego, para que la convergencia
+sea más rápida, la fórmula de iteración se puede optimizar como:
+
+\begin{equation*}
+    x_i = x_{i-1} - \frac{M\cdot f(x_{n-1})}{f^\prime(x_{n-1})}
+\end{equation*}
+
+Ejemplo: ídem punto fijo. $f^\prime(x) = 3 + \cos(x) - e^x$. Las primeras tres
+iteraciones son:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $x_i$  & $f(x_i)$ & $f^\prime(x_i)$ & $|x_i - x_{i-1}|$ \\\hline
+    1 & 0.3333 & -0.0684  & 2.5493          & 0.3333            \\
+    2 & 0.3602 & -0.0006  & 2.5023          & 0.0268            \\
+    3 & 0.3604 & -0.0000  & 2.5018          & 0.0003            \\
+\end{tabular}
+\end{table}
+
+\subsubsection{Método de la secante}
+
+Si en vez de utilizar la derivada de $f(x)$ en el método de Newton-Raphson 
+utilizamos una aproximación, obtenemos la fórmula de iteración del método de 
+la secante. Se necesitan, entonces, dos valores iniciales (que no necesariamente
+tienen que encerrar a la raíz).
+
+\begin{equation*}
+    x_i = x_{i-1} - \frac{f(x_{n-1})\cdot(x_{n-1}-x_{n-2})}{f(x_{n-1})-f(x_{n-2})}
+\end{equation*}
+
+Las condiciones de convergencia son las mismas que en Newton-Raphson.
+
+Ejemplo: idem Newton-Raphson, con $x_0 = 0$ y $x_1 = 1$. Las primeras 
+iteraciones son:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $x_i$  & $f(x_i)$ & $|x_i - x_{i-1}|$ \\\hline
+    2 & 0.4710 & 0.2652   & 0.5290            \\
+    3 & 0.3075 & -0.1348  & 0.1635            \\
+    4 & 0.3626 & 0.0055   & 0.0551            \\
+    5 & 0.3605 & 0.0001   & 0.0022
+\end{tabular}
+\end{table}
+
+\section{Sistemas de ecuaciones lineales}
+
+\subsection{Normas matriciales}
+
+Consiste en sumar los elementos (en valor absoluto) de filas o columnas y elegir el máximo. Hay tres formas posibles (qué es $X$?):
+
+\begin{itemize}
+    \item Norma euclidiana (norma 2), $||A||_2 = \text{max}_{x\to0} \frac{||AX||_2}{||X||_2}$. En Matlab, se calcula con \verb|norm(A)| o \verb|norm(A, 2)|.
+    \item Norma suma (norma 1), $||A||_1 = \text{max}_{x\to0} \frac{||AX||_1}{||X||_1}$ suma los elementos de cada \textbf{columna} en valor absoluto y elige el máximo. En Matlab, se calcula con \verb|norm(A, 1)|.
+    \item Norma del máximo (o norma $\infty$), $||A||_\infty = \text{max}_{x\to0} \frac{||AX||_\infty}{||X||_\infty}$ suma los elementos de cada \textbf{fila} en valor absoluto y elige el máximo. En Matlab, se calcula con \verb|norm(A, inf)|. \textbf{Es la que suele utilizar la cátedra.}
+\end{itemize}
+
+Se puede usar cualquier forma, pero es importante no mezclarlas en un mismo problema.
+
+\subsection{Condicionamiento del sistema}
+
+Si $X$ es solución exacta del sistema $AX=b$, $A$ invertible, $b\neq0$ y $\hat{X}$ es una solución aproximada de dicho sistema, se define el vector error de $X$ como $e = |\hat{X} - X|$ y el vector error residual $R=A\hat{X}-b$, que mide hasta dónde $\hat{X}$ satisface el sistema.
+
+Si $||R||=0\Rightarrow\hat{X}=X\Rightarrow||e||=0$, pero si el error residual es pequeño no se puede asegurar que el error en la solución también lo sea.
+
+Se puede probar que, si $\frac{||R||}{||b||}$ es pequeño, entonces $\frac{||e||}{||X||}$ también lo es, si se satisface $||A||\cdot||A^{-1}||\approx1$
+
+\subsubsection{Número de condición}
+
+El número de condición de una matriz no singular $A$ se define como $||A||\cdot||A^{-1}||$.
+
+En Matlab, se puede calcular con la función \verb|cond(A, p)|, donde \verb|A| es la matriz, y \verb|p| indica la norma a utilizar (ver sección \textbf{Normas matriciales}).
+
+Si Cond($A$) $\approx1\Rightarrow A$ está bien condicionada. Si Cond($A$) $>> 1\Rightarrow A$ está mal condicionada, y es posible que $A$ tenga un mal comportamiento (un error residual relativamente pequeño puede llevar a una solución aproximada mala). Este valor es relativo, pero debería considerarse $>> 100$.
+
+Ejemplos:
+\begin{enumerate}
+    \item \verb|cond(A, inf)| $=\begin{Vsmallmatrix}1 & 1\\ 10.05 & 10\end{Vsmallmatrix}_\infty \cdot \begin{Vsmallmatrix}-200 & 20\\ 201 & -20\end{Vsmallmatrix}_\infty = 20.05\cdot221 = 4431.05$
+\end{enumerate}
+
+\subsection{Cota del error relativo}
+
+Dado un sistema $AX=b$, si $\delta A$ y $\delta b$ denotan perturbaciones en $A$ y $b$, se puede establecer una cota para el error relativo en términos de las perturbaciones relativas y la condición de $A$.
+
+Sea $X$ la solución exacta de $AX=b$ y $\hat{X}$ la solución exacta del sistema perturbado $(A+\delta A)\hat{X} = b + \delta b$.
+
+Si $A$ es no singular (det$A\neq0$) y se cumple que $||\delta A|| < \frac{1}{||A^{-1}||}$, entonces
+
+\begin{equation}
+    \frac{||\hat{X}-X||}{||X||} \leq \frac{\text{Cond}(A)}{1-\text{Cond}(A)\cdot\frac{||\delta A||}{||A||}}\cdot\left[ \frac{||\delta b||}{||b||} + \frac{||\delta A||}{||A||} \right]
+\end{equation}
+
+Ejemplos:
+\begin{enumerate}
+    \item $||\delta A|| = 0.05\ \land\ \frac{1}{||A^{-1}||}=0.0045$. No se cumple la condición, entonces no se puede evaluar la posible variación.
+    \item $||\delta A|| = 0\ \land\ \text{Cond}(A)\cdot\frac{||\delta b||}{||b||} = 2.319 \geq \frac{||\hat{X}-X||}{||X||}$ (utilizando \verb|norm(A, inf)|)
+\end{enumerate}
+
+\subsection{Método Jacobi}
+
+Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es una matriz no singular (det$(A)\neq0$). Se lo puede transformar en un sistema equivalente $X^{(k)}=B_JX^{(k-1)}+c$, donde $B$ es la \textbf{matriz de iteración de Jacobi} y $c$ es un vector columna. La matriz $B$ se conforma de la siguiente manera:
+
+\begin{equation} \label{eq:jacobi}
+    B_{ij} = 
+    \begin{cases}
+        -\frac{a_{ij}}{a_{ii}} &\text{ si } i\neq j \\
+        0 &\text{ si } i=j
+    \end{cases}
+\end{equation}
+
+Y el vector $c$ como $c_i = \frac{b_i}{a_{ii}}$.
+
+También, la matriz $A$ puede descomponerse como $A=D+L+U$, siendo $D$ la matriz diagonal de $A$ (\verb|diag(diag(A))|), $L$ la matriz triangular estrictamente inferior de $A$ (\verb|tril(A, -1)|) y $U$ la matriz triangular estrictamente superior de $A$ (\verb|triu(A, -1)|). Entonces,
+
+\begin{equation}\label{eq:jacobi_vec}
+    AX = b \Longleftrightarrow (D+L+U)X = b \Longrightarrow X = -D^{-1}(L+U)X + D^{-1}b
+\end{equation}
+
+Quedando entonces
+
+\begin{equation*}
+    B = -D^{-1}(L+U),\ c = D^{-1}b
+\end{equation*}
+
+En Matlab,
+
+\begin{lstlisting}[language=Matlab]
+B = -inv(diag(diag(A)))*(tril(A,-1)+triu(A,1));
+c = inv(diag(diag(A)))*b;
+\end{lstlisting}
+
+\subsubsection{Convergencia}
+
+Una matriz es \textbf{estrictamente diagonalmente dominante} (EDD) si
+\begin{equation*}
+    \left|a_{ij}\right| > \sum_{j=1,\ j\neq i}^{n}\left|a_{ij}\right|\ \land\ \left|\left|A\right|\right|_\infty = \text{max}_{1\leq i\leq n} \sum_{j=1}^{n}\left|a_{ij}\right|
+\end{equation*}
+
+En criollo: la condición necesaria es que el elemento ubicado en la diagonal principal de cada ecuación sea mayor (en valor absoluto) que el resto de los elementos de la misma ecuación. La condición suficiente es que el elemento ubicado en la diagonal principal de cada ecuación sea mayor (en valor absoluto) que la suma del resto de los elementos de la misma ecuación.
+
+\begin{itemize}
+    \item $||B||<1$ si A es EDD. En este caso, el método Jacobi converge a una única solución.
+    \item Si $||B||\geq1$ no se puede asegurar la convergencia, y se debe estudiar el \textbf{radio espectral} $\rho(B)$.
+\end{itemize}
+
+El det($B-\lambda I$) es la ecuación característica de $B$, donde $\lambda$ es la variable e $I$ es la matriz identidad. El radio espectral $\rho(B)$ es el valor máximo entre las raíces de esta ecuación. Si $\rho(B)\geq1$ el método diverge, y converge en el caso contrario.
+
+El radio espectral se puede calcular en Matlab mediante \verb|max(abs(eig(B)))| o \verb|max(abs(roots(poly(B))))|.
+
+\subsubsection{Ejemplo}
+
+\begin{equation*}
+    A =
+    \begin{bmatrix}
+        2 & -1 & 1 \\
+        1 &  1 & 3 \\
+        3 &  3 & 5
+    \end{bmatrix},\ 
+    X =
+    \begin{bmatrix}
+        x_1 \\ x_2 \\ x_3
+    \end{bmatrix},\ 
+    b =
+    \begin{bmatrix}
+        -1 \\ 0 \\ 4
+    \end{bmatrix}
+\end{equation*}
+
+Empleando la ecuación (\ref{eq:jacobi}), se obtiene
+
+\begin{equation*}
+    B =
+    \begin{bmatrix}
+        0 & \frac{1}{2} & -\frac{1}{2} \\
+        -1 & 0 & -3 \\
+        -\frac{3}{5} & -\frac{3}{5} & 0
+    \end{bmatrix},\ 
+    c =
+    \begin{bmatrix}
+        -\frac{1}{2} \\ 0 \\ \frac{4}{5}
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+    \text{det}(B-\lambda I) =
+    \begin{vmatrix}
+        -\lambda & \frac{1}{2} & -\frac{1}{2} \\
+        -1 & -\lambda & -3 \\
+        -\frac{3}{5} & -\frac{3}{5} & -\lambda
+    \end{vmatrix}
+    = -\lambda^3 + \frac{8}{5}\lambda + \frac{3}{5}
+\end{equation*}
+
+Igualando a cero esta expresión se obtienen las raíces, y la mayor de ellas es $\rho(B) = 1.42$. Al ser mayor que 1, el método Jacobi no converge. Sin embargo, al intercambiar las filas 2 y 3 de la matriz $A$ y rehacer las operaciones, se encuentra esta vez que $\rho(B) = 0.631$, entonces el método \textit{sí} converge, cualquiera sea la aproximación inicial $X^{(0)}$.
+
+Luego de hacer la operación entre filas de $A$, nos queda
+
+\begin{equation*}
+    B = 
+    \begin{bmatrix}
+        0 & \frac{1}{2} & -\frac{1}{2} \\
+        -1 & 0 & -\frac{5}{3} \\
+        -\frac{1}{3} & -\frac{1}{3} & 0
+    \end{bmatrix},\ 
+    c = 
+    \begin{bmatrix}
+        -\frac{1}{2} \\ \frac{4}{3} \\ 0
+    \end{bmatrix}
+\end{equation*}
+
+Si tomamos $X^{(0)} = \begin{bmatrix}0\\0\\0\end{bmatrix}$ y queremos que $||X^{(k)} - X^{(k-1)}||<0.001$:
+
+\begin{equation*}
+    X^{(1)} = \begin{bmatrix}-0.5\\1.3333\\0\end{bmatrix},\ 
+    X^{(2)} = \begin{bmatrix}0.16667\\1.8333\\-0.27778\end{bmatrix},\ \dots,\ 
+    X^{(16)} = \begin{bmatrix}0.99873\\1.9994\\-0.99901\end{bmatrix} 
+\end{equation*}
+
+Como $k = 16$ es el primer entero positivo para el cual se cumple la condición impuesta, $X\approx X^{(16)}$ es solución al problema.
+
+\subsection{Método Gauss-Seidel}
+
+Es una mejora del algoritmo de Jacobi que consiste en obtener $x_i^{(k)}$ utilizando las $x_1^{(k)},\ x_2^{(k)},\ \dots,\ x_{i-1}^{(k)}$ ya calculadas, debido a que son mejores aproximaciones a la solución exacta. En general:
+
+\begin{equation}\label{eq:Gauss-Seidel}
+    x_i^{(k)} = \frac{b_i - \sum_{j=1}^{i-1} a_{ij}x_j^{(k)} - \sum_{j=i+1}^n a_{ij}x_j^{(k-1)}}{a_{ii}}
+\end{equation}
+
+Reordenando la ec. (\ref{eq:Gauss-Seidel}) se puede demostrar que la ecuación vectorial de este método queda:
+
+\begin{equation}\label{Gauss-Seidel-vec}
+    X^{(k)} = (D+L)^{-1}(-U)X^{(k-1)} + (D+L)^{-1}b = B_{GS}X^{(k-1)} + c_{GS}
+\end{equation}
+
+Hasta donde sé, no hay una fórmula como la ec. (\ref{eq:jacobi}) para calcular la matriz $B_{GS}$ (que no es la misma que $B_J$). Pero se puede aprovechar la ec. (\ref{Gauss-Seidel-vec}) y, en Matlab:
+
+\begin{lstlisting}[language=Matlab]
+T = tril(A);
+U = triu(A, 1);
+B = -inv(T)*U;
+c = inv(T)*b;
+B = -inv(tril(A))*triu(A, 1); c = inv(tril(A))*b; % one-liner
+\end{lstlisting}
+
+\begin{equation}
+\begin{bmatrix}
+0 & \frac{-a_{12}}{a_{11}} & \frac{-a_{13}}{a_{11}} \\
+0 & \frac{a_{12}a_{21}}{a_{11}a_{22}} & \frac{a_{13}a_{21}}{a_{11}a_{22}} - \frac{a_{23}}{a_{22}} \\
+0 & \frac{-(a_{12}(a_{21}a_{32} - a_{22}a_{31}))}{a_{11}a_{22}a_{33}} & \frac{a_{23}a_{32}}{a_{22}a_{33}} - \frac{(a_{13}(a_{21}a_{32} - a_{22}a_{31}))}{a_{11}a_{22}a_{33}}
+\end{bmatrix}
+\end{equation}
+
+\subsubsection{Convergencia}
+
+El análisis de convergencia de éste método coincide con Jacobi, aunque suele converger más rápido.
+
+\section{Sistemas de ecuaciones no lineales}
+
+\subsection{Punto fijo}
+
+Sea un sistema de ecuaciones como el siguiente:
+
+\begin{equation*}
+    F(X) = 0,\ F = \left[f_1,\ f_2,\ \dots,\ f_n\right],\ X = \left[x_1,\ x_2,\ \dots,\ x_n\right]
+\end{equation*}
+
+El método de punto fijo consiste en despejar $x_i$ para obtener una función $g_i$, como en el método de punto fijo para sistemas lineales. La idea es esta:
+
+\begin{equation*}
+    F(X) = 0,\ X = G(X) \Longrightarrow X^{(k+1)} = G\left(X^{(k)}\right)
+\end{equation*}
+
+\subsubsection{Convergencia}
+
+La condición de convergencia es  $\left|g^{\prime}(x)\right|<1$. Es decir,
+
+\begin{equation*}
+\begin{split}
+    \left|\frac{\partial g_1}{\partial x_1}\right| + \left|\frac{\partial g_1}{\partial x_2}\right| + \dots + \left|\frac{\partial g_1}{\partial x_n}\right| \leq K_1 < 1 \\
+    \vdots \\
+    \left|\frac{\partial g_n}{\partial x_1}\right| + \left|\frac{\partial g_n}{\partial x_2}\right| + \dots + \left|\frac{\partial g_n}{\partial x_n}\right| \leq K_n < 1
+\end{split}    
+\end{equation*}
+
+\subsubsection{Ejemplo}
+
+Hallar los valores de $x$ e $y$ del siguiente sistema, empezando en $(x^{(0)}, y^{(0)}) = (3,1)$
+
+\begin{align*}
+    x^2 + y^2 + 8 - 10x &= 0\text{ (A)}\\
+    xy^2 + x + 8 - 10y &= 0\text{ (B)}
+\end{align*}
+
+Está facil despejar $x$ de la ecuación A e $y$ de la ecuación B. Entonces queda:
+
+\begin{align*}
+    x = \frac{x^2+y^2+8}{10} &= F(x,y) \\
+    y = \frac{xy^2+x+8}{10} &= G(x,y)
+\end{align*}
+
+Derivando $F$ y $G$ respecto de $x$ y de $y$, queda
+
+\begin{align*}
+    F_x(x,y) = \frac{x}{5}&,\ F_y(x,y) = \frac{y}{5} \\
+    G_x(x,y) = \frac{y^2+1}{10}&,\ G_y(x,y) = \frac{xy}{5}
+\end{align*}
+
+Se especializa lo anterior en el punto $(x^{(0)}, y^{(0)})$ y se evalúa el criterio de convergencia:
+
+\begin{align*}
+    |F_x(3,1)| + |F_y(3,1)| < 1\ &\land\ |G_x(3,1)| + |G_y(3,1)| < 1 \\
+    0.6 + 0.2 = 0.8 < 1\ &\land\ 0.2 + 0.6 = 0.8 < 1\ \Longrightarrow\text{ Converge}
+\end{align*}
+
+Calculamos $x^{(1)}$...
+
+\begin{equation*}
+    x^{(1)} = F(3,1) = 1.8
+\end{equation*}
+
+...y utilizamos ese valor para calcular $y^{(1)}$:
+
+\begin{equation*}
+    y^{(1)} = F(1.8,1) = 1.16
+\end{equation*}
+
+Las siguientes iteraciones se dan en esta tabla:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+$i$ & $x_i$  & $y_i$  \\
+0 & 3     & 1     \\
+1 & 1.8   & 1.16  \\
+2 & 1.259 & 1.095 \\
+3 & 1.078 & 1.037 \\
+4 & 1.024 & 1.013
+\end{tabular}
+\end{table}
+
+\subsection{Newton}
+
+Sea un sistema de ecuaciones como el siguiente:
+
+\begin{equation*}
+    F(X) = 0,\ F = \left[f_1,\ f_2,\ \dots,\ f_n\right],\ X = \left[x_1,\ x_2,\ \dots,\ x_n\right]
+\end{equation*}
+
+La fórmula de iteración del método de Newton para sistemas no lineales es:
+
+\begin{equation}\label{eq:Newton}
+    X^{(k+1)} = X^{(k)} - \left(J\left(X^{(k)}\right)\right)^{-1} \cdot F\left(X^{(k)}\right)
+\end{equation}
+
+$J$ es el Jacobiano. Para dos $f$ y dos $x_i$,
+
+\begin{equation*}
+    J = \begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} \\
+    \frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2}
+    \end{bmatrix}
+\end{equation*}
+
+En Matlab se puede hallar con
+
+\begin{lstlisting}[language=Matlab]
+syms x1, x2, ..., xn
+jacobian([f1, f2, ..., fn], [x1, x2, ..., xn]);
+\end{lstlisting}
+
+\subsubsection{Ejemplo}
+
+Sea el sistema
+
+\begin{align*}
+    x^2 + y^2 - 1 &= 0 \\
+    x^2 - y^2 - 1 &= 0
+\end{align*}
+
+Conseguimos el Jacobiano (se puede hacer a mano)
+
+\begin{lstlisting}[language=Matlab]
+syms x, y
+jacobian([x^2 + y^2 - 1, x^2 - y^2 - 1], [x, y]);
+\end{lstlisting}
+
+\begin{equation*}
+    J = \begin{bmatrix}
+    2x & 2y \\
+    2x & -2y
+    \end{bmatrix},\ F(x, y) = \begin{bmatrix}
+    x^2 + y^2 - 1 \\
+    x^2 - y^2 - 1
+    \end{bmatrix}
+\end{equation*}
+
+Empezamos con $X^{(0)} = \begin{bmatrix}0.5\\0.5\end{bmatrix}$ y lo aplicamos a la fórmula (\ref{eq:Newton})
+
+\begin{equation*}
+    X^{(1)} = \begin{bmatrix}0.5\\0.5\end{bmatrix} - \begin{bmatrix}
+    2\cdot0.5 & 2\cdot0.5 \\
+    2\cdot0.5 & -2\cdot0.5
+    \end{bmatrix}^{-1} \cdot \begin{bmatrix}
+    0.5^2 + 0.5^2 - 1 \\
+    0.5^2 - 0.5^2 - 1
+    \end{bmatrix} = \begin{bmatrix}
+    1.25 \\ 0.25
+    \end{bmatrix}
+\end{equation*}
+
+Las iteraciones siguientes son:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+$i$ & $x_i$   & $y_i$   \\
+0 & 0.5    & 0.5    \\
+1 & 1.25   & 0.25   \\
+2 & 1.025  & 0.125  \\
+3 & 1.0003 & 0.0625 \\
+4 & 1.0000 & 0.0313
+\end{tabular}
+\end{table}
+
+\subsection{Newton simplificado}
+
+Si se trabaja la ecuación (\ref{eq:Newton}) y se llama $Z_{k+1} = \left(X_{k+1} - X_k\right)$, se llega a la fórmula simplificada de iteración de Newton. Evita tener que invertir el Jacobiano en cada iteración:
+
+\begin{equation}\label{eq:Newton-Simp}
+    J\left(X_k\right)\cdot Z_{k+1} = -F\left(X_k\right)
+\end{equation}
+
+\subsubsection{Ejemplo}
+
+Sea el sistema
+
+\begin{align*}
+    x^2 - 10x + y^2 + 8 &= 0 \\
+    xy^2 + x - 10y + 8 &= 0
+\end{align*}
+
+El Jacobiano es
+
+\begin{equation*}
+    J = \begin{bmatrix}
+    2x-10 & 2y \\
+    y^2 + 1 & 2xy - 10
+    \end{bmatrix}
+\end{equation*}
+
+Empezamos en $X_0 = \begin{bmatrix}0.5\\0.5\end{bmatrix}$, con la ecuación (\ref{eq:Newton-Simp}):
+
+\begin{equation*}
+    \begin{bmatrix}
+    -9 & 1 \\
+    1.25 & -9.5
+    \end{bmatrix} \cdot Z_{1} = \begin{bmatrix}
+    -3.5 \\
+    -3.625
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+    Z_{1} = \begin{bmatrix}
+    0.4377 \\ 0.4392
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+    X_1 = Z_1 + X_0 = \begin{bmatrix}
+    0.9377 \\
+    0.9392
+    \end{bmatrix}
+\end{equation*}
+
+\end{document}
