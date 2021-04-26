@@ -140,7 +140,7 @@ directamente no se pueden representar en binario sin recurrencia.
 
 \begin{equation*}
     1\ 101.011_{2} = 1\cdot2^3 + 1\cdot2^2 + 0\cdot2^1 + 1\cdot2^0 + 
-    0\cdot2^{-1} + 1\cdot2^{-2} + 1\cdot2^{-3}
+    0\cdot2^{-1} + 1\cdot2^{-2} + 1\cdot2^{-3} = 13.375_{10}
 \end{equation*}
 
 \subsubsection{Representación de enteros binarios sin signo}
@@ -153,20 +153,52 @@ $15_{10} + 1_{10} = 1111_{2} + 0001_{2} = 10000_{2}$.
 \subsubsection{Representación de números enteros binarios con signo y 
 complemento a uno}
 
-Un bit es destinado al signo. Con $n$ bits se pueden representar los números
-enteros en el rango $[-2^{n-1}-1,\ 2^{n-1}-1]$.
+Un bit es destinado al signo (1=negativo, 0=positivo). Con $n$ bits se pueden 
+representar los números enteros en el rango $[-2^{n-1},\ 2^{n-1}-1]$.
+
+Ejemplo: Representar -96 en complemento 1 con 8 bits
+\begin{enumerate}
+    \item Convertir de decimal a binario: $96_{10} = 110\ 0000_{2}$
+    \item Completar con ceros hasta alcanzar los 8 bits: $0110\ 0000$.
+    \item Si el número fuera positivo, ese es el resultado. Como es 
+    negativo, hay que cambiar los ceros por unos y viceversa: 
+    $1001\ 1111$
+\end{enumerate}
+
+Ejemplo: Convertir de complemento 1 a decimal el valor $1001\ 1111_{2}$
+\begin{enumerate}
+    \item Identificar el bit más significativo: si es 1 es negativo; de lo 
+    contrario no es necesario hacer ningún cambio.
+    \item Como este valor es negativo, aplicamos el complemento 1: $0110\ 0000$.
+    \item Finalmente, hacer el pasaje a decimal: $0110\ 0000_{2} = -96_{10}$
+\end{enumerate}
 
 \subsubsection{Representación de números enteros binarios con signo y 
 complemento a dos}
 
 El primer bit indica el signo. Para positivos, el resto de los bits indica su
 magnitud. Para negativos, el resto de los dígitos representan el complemento de
-su magnitud, $+1$. Por ejemplo:
+su magnitud, $+1$.
 
-\begin{equation*}
-    7_{10} = 0111_{2},\ -7_{10} = \text{compl}_{2} \left(0111\right) + 1_{2}
-    = 1000_{2} + 1_{2} = 1001_{2}
-\end{equation*}
+Ejemplo: Representar -96 en complemento 2 con 8 bits
+\begin{enumerate}
+    \item Convertir de decimal a binario: $96_{10} = 110\ 0000_{2}$.
+    \item Completar con ceros hasta alcanzar los 8 bits: $0110\ 0000$.
+    \item Si el número fuera positivo, ese es el resultado. Como es 
+    negativo, hay que buscar todos los ceros, de derecha a izquierda, 
+    hasta encontrarse con el primer 1. A partir de ahí, se aplica el 
+    complemento 1: $1010\ 0000$.
+\end{enumerate}
+
+Ejemplo: Convertir de complemento 2 a decimal el valor $1001\ 1111_{2}$
+\begin{enumerate}
+    \item Identificar el bit más significativo: si es 1 es negativo; de lo 
+    contrario no es necesario hacer ningún cambio.
+    \item Como este valor es negativo, se identifica el primer 1 desde la 
+    derecha, que pasa sin cambio al resultado. A partir de ese dígito, se aplica
+    el complemento 1: $0110\ 0001$
+    \item Finalmente, hacer el pasaje a decimal: $0110\ 0000_{2} = -97_{10}$
+\end{enumerate}
 
 Con $n$ bits se pueden representar los números enteros en el rango
 $[-2^{n-1},\ 2^{n-1}-1]$.
