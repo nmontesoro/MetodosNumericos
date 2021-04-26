@@ -294,7 +294,20 @@ end
 \end{lstlisting}
 
 El resultado será: 1075 valores de \verb|x|, donde los últimos dos son 
-\verb|eps * realmin| y 0. 
+\verb|eps * realmin| y 0.
+
+\subsection{Errores de truncamiento}
+
+Los errores de truncamiento resultan de usar una aproximación en lugar de un
+procedimiento matemático exacto. Por ejemplo, podría aproximarse la derivada de
+la velocidad de un proyectil como 
+
+\begin{equation}
+    \frac{dv}{dt} \approx \frac{\Delta v}{\Delta t} = \frac{v(t_{i+1}) - v(t_i)}{t_{i+1} - t_i}
+\end{equation}
+
+Se presenta un error de truncamiento en la solución numérica, ya que la ecuación
+en diferencia sólo aproxima el valor verdadero de la derivada.
 
 \subsection{Errores de redondeo}
 
