@@ -413,7 +413,7 @@ Se dice que un problema está mal condicionado cuando la solución es muy sensib
 a pequeños cambios en las variables de entrada (que pueden ser introducidos al 
 resolver el problema mediante la computadora).
 
-\section{Solución de ecuaciones no lineales}
+\section{Solución de ecuaciones lineales}
 
 Un número $\alpha$ se dice raíz de la ecuación $f(x)$ si $f(\alpha) = 0$.
 Los métodos numéricos para encontrar una raíz de una ecuación $f(x)$ son métodos
@@ -646,7 +646,7 @@ iteraciones son:
 \end{tabular}
 \end{table}
 
-\section{Sistemas de ecuaciones lineales}
+\section{Sistemas de ecuaciones no lineales}
 
 \subsection{Normas matriciales}
 
@@ -654,12 +654,21 @@ Se trata de una extensión de la norma vectorial a las matrices. Hay tres formas
 de calcularlas:
 
 \begin{itemize}
-    \item Norma euclidiana (norma 2), $||A||_2 = \text{max}_{x\to0} \frac{||AX||_2}{||X||_2}$. En Matlab, se calcula con \verb|norm(A)| o \verb|norm(A, 2)|.
-    \item Norma suma (norma 1), $||A||_1 = \text{max}_{x\to0} \frac{||AX||_1}{||X||_1}$ suma los elementos de cada \textbf{columna} en valor absoluto y elige el máximo. En Matlab, se calcula con \verb|norm(A, 1)|.
-    \item Norma del máximo (o norma $\infty$), $||A||_\infty = \text{max}_{x\to0} \frac{||AX||_\infty}{||X||_\infty}$ suma los elementos de cada \textbf{fila} en valor absoluto y elige el máximo. En Matlab, se calcula con \verb|norm(A, inf)|. \textbf{Es la que suele utilizar la cátedra.}
+    \item Norma euclidiana (norma 2), 
+        $||A||_2 = \text{max}_{x\to0} \frac{||AX||_2}{||X||_2}$. 
+        En Matlab, se calcula con \verb|norm(A)| o \verb|norm(A, 2)|.
+    \item Norma suma (norma 1), 
+        $||A||_1 = \text{max}_{x\to0} \frac{||AX||_1}{||X||_1}$ suma los 
+        elementos de cada \textbf{columna} en valor absoluto y elige el máximo. 
+        En Matlab, se calcula con \verb|norm(A, 1)|.
+    \item Norma del máximo (o norma $\infty$), 
+        $||A||_\infty = \text{max}_{x\to0} \frac{||AX||_\infty}{||X||_\infty}$ 
+        suma los elementos de cada \textbf{fila} en valor absoluto y elige el 
+        máximo. En Matlab, se calcula con \verb|norm(A, inf)|.
 \end{itemize}
 
-Se puede usar cualquier forma, pero es importante no mezclarlas en un mismo problema.
+Se puede usar cualquier forma, pero es importante no mezclarlas en un mismo 
+problema.
 
 Tienen las siguientes propiedades:
 
@@ -673,19 +682,32 @@ Tienen las siguientes propiedades:
 
 \subsection{Condicionamiento del sistema}
 
-Si $X$ es solución exacta del sistema $AX=b$, $A$ invertible, $b\neq0$ y $\hat{X}$ es una solución aproximada de dicho sistema, se define el vector error de $X$ como $e = |\hat{X} - X|$ y el vector error residual $R=A\hat{X}-b$, que mide hasta dónde $\hat{X}$ satisface el sistema.
+Si $X$ es solución exacta del sistema $AX=b$, $A$ invertible, $b\neq0$ y 
+$\hat{X}$ es una solución aproximada de dicho sistema, se define el vector error
+ de $X$ como $e = |\hat{X} - X|$ y el vector error residual $R=A\hat{X}-b$, que 
+ mide hasta dónde $\hat{X}$ satisface el sistema.
 
-Si $||R||=0\Rightarrow\hat{X}=X\Rightarrow||e||=0$, pero si el error residual es pequeño no se puede asegurar que el error en la solución también lo sea.
+Si $||R||=0\Rightarrow\hat{X}=X\Rightarrow||e||=0$, pero si el error residual es
+ pequeño no se puede asegurar que el error en la solución también lo sea.
 
-Se puede probar que, si $\frac{||R||}{||b||}$ es pequeño, entonces $\frac{||e||}{||X||}$ también lo es, si se satisface $||A||\cdot||A^{-1}||\approx1$
+Se puede probar que, si $\frac{||R||}{||b||}$ es pequeño, entonces 
+$\frac{||e||}{||X||}$ también lo es, si se satisface 
+$||A||\cdot||A^{-1}||\approx1$.
 
 \subsubsection{Número de condición}
 
-El número de condición de una matriz no singular $A$ se define como $||A||\cdot||A^{-1}||$.
+El número de condición de una matriz no singular $A$ se define como 
+$||A||\cdot||A^{-1}||$.
 
-En Matlab, se puede calcular con la función \verb|cond(A, p)|, donde \verb|A| es la matriz, y \verb|p| indica la norma a utilizar (ver sección \textbf{Normas matriciales}).
+En Matlab, se puede calcular con la función \verb|cond(A, p)|, donde \verb|A| es
+la matriz, y \verb|p| indica la norma a utilizar (ver sección 
+\textbf{Normas matriciales}).
 
-Si Cond($A$) $\approx1\Rightarrow A$ está bien condicionada. Si Cond($A$) $>> 1\Rightarrow A$ está mal condicionada, y es posible que $A$ tenga un mal comportamiento (un error residual relativamente pequeño puede llevar a una solución aproximada mala). Este valor es relativo, pero debería considerarse $>> 100$.
+Si Cond($A$) $\approx1\Rightarrow A$ está bien condicionada. Si 
+Cond($A$) $>> 1\Rightarrow A$ está mal condicionada, y es posible que $A$ tenga 
+un mal comportamiento (un error residual relativamente pequeño puede llevar a 
+una solución aproximada mala). Este valor es relativo, pero debería 
+considerarse $>> 100$.
 
 Ejemplos:
 \begin{enumerate}
@@ -694,25 +716,35 @@ Ejemplos:
 
 \subsection{Cota del error relativo}
 
-Dado un sistema $AX=b$, si $\delta A$ y $\delta b$ denotan perturbaciones en $A$ y $b$, se puede establecer una cota para el error relativo en términos de las perturbaciones relativas y la condición de $A$.
+Dado un sistema $AX=b$, si $\delta A$ y $\delta b$ denotan perturbaciones en $A$
+y $b$, se puede establecer una cota para el error relativo en términos de las 
+perturbaciones relativas y la condición de $A$.
 
-Sea $X$ la solución exacta de $AX=b$ y $\hat{X}$ la solución exacta del sistema perturbado $(A+\delta A)\hat{X} = b + \delta b$.
+Sea $X$ la solución exacta de $AX=b$ y $\hat{X}$ la solución exacta del sistema 
+perturbado $(A+\delta A)\hat{X} = b + \delta b$.
 
-Si $A$ es no singular (det$A\neq0$) y se cumple que $||\delta A|| < \frac{1}{||A^{-1}||}$, entonces
+Si $A$ es no singular (det$A\neq0$) y se cumple que 
+$||\delta A|| < \frac{1}{||A^{-1}||}$, entonces
 
 \begin{equation}
-    \frac{||\hat{X}-X||}{||X||} \leq \frac{\text{Cond}(A)}{1-\text{Cond}(A)\cdot\frac{||\delta A||}{||A||}}\cdot\left[ \frac{||\delta b||}{||b||} + \frac{||\delta A||}{||A||} \right]
+    \frac{||\hat{X}-X||}{||X||} \leq 
+    \frac{\text{Cond}(A)}{1-\text{Cond}(A)\cdot\frac{||\delta A||}{||A||}}\cdot\left[ \frac{||\delta b||}{||b||} + \frac{||\delta A||}{||A||} \right]
 \end{equation}
 
 Ejemplos:
 \begin{enumerate}
-    \item $||\delta A|| = 0.05\ \land\ \frac{1}{||A^{-1}||}=0.0045$. No se cumple la condición, entonces no se puede evaluar la posible variación.
+    \item $||\delta A|| = 0.05\ \land\ \frac{1}{||A^{-1}||}=0.0045$. No se 
+        cumple la condición, entonces no se puede evaluar la posible variación.
     \item $||\delta A|| = 0\ \land\ \text{Cond}(A)\cdot\frac{||\delta b||}{||b||} = 2.319 \geq \frac{||\hat{X}-X||}{||X||}$ (utilizando \verb|norm(A, inf)|)
 \end{enumerate}
 
 \subsection{Método Jacobi}
 
-Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es una matriz no singular (det$(A)\neq0$). Se lo puede transformar en un sistema equivalente $X^{(k)}=B_JX^{(k-1)}+c$, donde $B$ es la \textbf{matriz de iteración de Jacobi} y $c$ es un vector columna. La matriz $B$ se conforma de la siguiente manera:
+Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es 
+una matriz no singular (det$(A)\neq0$). Se lo puede transformar en un sistema 
+equivalente $X^{(k)}=B_JX^{(k-1)}+c$, donde $B$ es la 
+\textbf{matriz de iteración de Jacobi} y $c$ es un vector columna. La matriz 
+$B$ se conforma de la siguiente manera:
 
 \begin{equation} \label{eq:jacobi}
     B_{ij} = 
@@ -724,7 +756,10 @@ Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es 
 
 Y el vector $c$ como $c_i = \frac{b_i}{a_{ii}}$.
 
-También, la matriz $A$ puede descomponerse como $A=D+L+U$, siendo $D$ la matriz diagonal de $A$ (\verb|diag(diag(A))|), $L$ la matriz triangular estrictamente inferior de $A$ (\verb|tril(A, -1)|) y $U$ la matriz triangular estrictamente superior de $A$ (\verb|triu(A, -1)|). Entonces,
+También, la matriz $A$ puede descomponerse como $A=D+L+U$, siendo $D$ la matriz 
+diagonal de $A$ (\verb|diag(diag(A))|), $L$ la matriz triangular estrictamente 
+inferior de $A$ (\verb|tril(A, -1)|) y $U$ la matriz triangular estrictamente 
+superior de $A$ (\verb|triu(A, -1)|). Entonces,
 
 \begin{equation}\label{eq:jacobi_vec}
     AX = b \Longleftrightarrow (D+L+U)X = b \Longrightarrow X = -D^{-1}(L+U)X + D^{-1}b
@@ -750,16 +785,26 @@ Una matriz es \textbf{estrictamente diagonalmente dominante} (EDD) si
     \left|a_{ij}\right| > \sum_{j=1,\ j\neq i}^{n}\left|a_{ij}\right|\ \land\ \left|\left|A\right|\right|_\infty = \text{max}_{1\leq i\leq n} \sum_{j=1}^{n}\left|a_{ij}\right|
 \end{equation*}
 
-En criollo: la condición necesaria es que el elemento ubicado en la diagonal principal de cada ecuación sea mayor (en valor absoluto) que el resto de los elementos de la misma ecuación. La condición suficiente es que el elemento ubicado en la diagonal principal de cada ecuación sea mayor (en valor absoluto) que la suma del resto de los elementos de la misma ecuación.
+En criollo: la condición necesaria es que el elemento ubicado en la diagonal 
+principal de cada ecuación sea mayor (en valor absoluto) que el resto de los 
+elementos de la misma ecuación. La condición suficiente es que el elemento 
+ubicado en la diagonal principal de cada ecuación sea mayor (en valor absoluto) 
+que la suma del resto de los elementos de la misma ecuación.
 
 \begin{itemize}
-    \item $||B||<1$ si A es EDD. En este caso, el método Jacobi converge a una única solución.
-    \item Si $||B||\geq1$ no se puede asegurar la convergencia, y se debe estudiar el \textbf{radio espectral} $\rho(B)$.
+    \item $||B||<1$ si A es EDD. En este caso, el método Jacobi converge a una 
+        única solución.
+    \item Si $||B||\geq1$ no se puede asegurar la convergencia, y se debe 
+        estudiar el \textbf{radio espectral} $\rho(B)$.
 \end{itemize}
 
-El det($B-\lambda I$) es la ecuación característica de $B$, donde $\lambda$ es la variable e $I$ es la matriz identidad. El radio espectral $\rho(B)$ es el valor máximo entre las raíces de esta ecuación. Si $\rho(B)\geq1$ el método diverge, y converge en el caso contrario.
+El det($B-\lambda I$) es la ecuación característica de $B$, donde $\lambda$ es 
+la variable e $I$ es la matriz identidad. El radio espectral $\rho(B)$ es el 
+valor máximo entre las raíces de esta ecuación. Si $\rho(B)\geq1$ el método 
+diverge, y converge en el caso contrario.
 
-El radio espectral se puede calcular en Matlab mediante \verb|max(abs(eig(B)))| o \verb|max(abs(roots(poly(B))))|.
+El radio espectral se puede calcular en Matlab mediante \verb|max(abs(eig(B)))| 
+o \verb|max(abs(roots(poly(B))))|.
 
 \subsubsection{Ejemplo}
 
@@ -805,7 +850,11 @@ Empleando la ecuación (\ref{eq:jacobi}), se obtiene
     = -\lambda^3 + \frac{8}{5}\lambda + \frac{3}{5}
 \end{equation*}
 
-Igualando a cero esta expresión se obtienen las raíces, y la mayor de ellas es $\rho(B) = 1.42$. Al ser mayor que 1, el método Jacobi no converge. Sin embargo, al intercambiar las filas 2 y 3 de la matriz $A$ y rehacer las operaciones, se encuentra esta vez que $\rho(B) = 0.631$, entonces el método \textit{sí} converge, cualquiera sea la aproximación inicial $X^{(0)}$.
+Igualando a cero esta expresión se obtienen las raíces, y la mayor de ellas es 
+$\rho(B) = 1.42$. Al ser mayor que 1, el método Jacobi no converge. Sin embargo,
+al intercambiar las filas 2 y 3 de la matriz $A$ y rehacer las operaciones, se 
+encuentra esta vez que $\rho(B) = 0.631$, entonces el método \textit{sí} 
+converge, cualquiera sea la aproximación inicial $X^{(0)}$.
 
 Luego de hacer la operación entre filas de $A$, nos queda
 
@@ -822,7 +871,8 @@ Luego de hacer la operación entre filas de $A$, nos queda
     \end{bmatrix}
 \end{equation*}
 
-Si tomamos $X^{(0)} = \begin{bmatrix}0\\0\\0\end{bmatrix}$ y queremos que $||X^{(k)} - X^{(k-1)}||<0.001$:
+Si tomamos $X^{(0)} = \begin{bmatrix}0\\0\\0\end{bmatrix}$ y queremos que 
+$||X^{(k)} - X^{(k-1)}||<0.001$:
 
 \begin{equation*}
     X^{(1)} = \begin{bmatrix}-0.5\\1.3333\\0\end{bmatrix},\ 
@@ -830,23 +880,29 @@ Si tomamos $X^{(0)} = \begin{bmatrix}0\\0\\0\end{bmatrix}$ y queremos que $||X^{
     X^{(16)} = \begin{bmatrix}0.99873\\1.9994\\-0.99901\end{bmatrix} 
 \end{equation*}
 
-Como $k = 16$ es el primer entero positivo para el cual se cumple la condición impuesta, $X\approx X^{(16)}$ es solución al problema.
+Como $k = 16$ es el primer entero positivo para el cual se cumple la condición 
+impuesta, $X\approx X^{(16)}$ es solución al problema.
 
 \subsection{Método Gauss-Seidel}
 
-Es una mejora del algoritmo de Jacobi que consiste en obtener $x_i^{(k)}$ utilizando las $x_1^{(k)},\ x_2^{(k)},\ \dots,\ x_{i-1}^{(k)}$ ya calculadas, debido a que son mejores aproximaciones a la solución exacta. En general:
+Es una mejora del algoritmo de Jacobi que consiste en obtener $x_i^{(k)}$ 
+utilizando las $x_1^{(k)},\ x_2^{(k)},\ \dots,\ x_{i-1}^{(k)}$ ya calculadas, 
+debido a que son mejores aproximaciones a la solución exacta. En general:
 
 \begin{equation}\label{eq:Gauss-Seidel}
     x_i^{(k)} = \frac{b_i - \sum_{j=1}^{i-1} a_{ij}x_j^{(k)} - \sum_{j=i+1}^n a_{ij}x_j^{(k-1)}}{a_{ii}}
 \end{equation}
 
-Reordenando la ec. (\ref{eq:Gauss-Seidel}) se puede demostrar que la ecuación vectorial de este método queda:
+Reordenando la ec. (\ref{eq:Gauss-Seidel}) se puede demostrar que la ecuación 
+vectorial de este método queda:
 
 \begin{equation}\label{Gauss-Seidel-vec}
     X^{(k)} = (D+L)^{-1}(-U)X^{(k-1)} + (D+L)^{-1}b = B_{GS}X^{(k-1)} + c_{GS}
 \end{equation}
 
-Hasta donde sé, no hay una fórmula como la ec. (\ref{eq:jacobi}) para calcular la matriz $B_{GS}$ (que no es la misma que $B_J$). Pero se puede aprovechar la ec. (\ref{Gauss-Seidel-vec}) y, en Matlab:
+Hasta donde sé, no hay una fórmula como la ec. (\ref{eq:jacobi}) para calcular 
+la matriz $B_{GS}$ (que no es la misma que $B_J$). Pero se puede aprovechar la 
+ec. (\ref{Gauss-Seidel-vec}) y, en Matlab:
 
 \begin{lstlisting}[language=Matlab]
 T = tril(A);
@@ -866,7 +922,8 @@ B = -inv(tril(A))*triu(A, 1); c = inv(tril(A))*b; % one-liner
 
 \subsubsection{Convergencia}
 
-El análisis de convergencia de éste método coincide con Jacobi, aunque suele converger más rápido.
+El análisis de convergencia de éste método coincide con Jacobi, aunque suele 
+converger más rápido.
 
 \section{Sistemas de ecuaciones no lineales}
 
@@ -878,7 +935,8 @@ Sea un sistema de ecuaciones como el siguiente:
     F(X) = 0,\ F = \left[f_1,\ f_2,\ \dots,\ f_n\right],\ X = \left[x_1,\ x_2,\ \dots,\ x_n\right]
 \end{equation*}
 
-El método de punto fijo consiste en despejar $x_i$ para obtener una función $g_i$, como en el método de punto fijo para sistemas lineales. La idea es esta:
+El método de punto fijo consiste en despejar $x_i$ para obtener una función 
+$g_i$, como en el método de punto fijo para sistemas lineales. La idea es esta:
 
 \begin{equation*}
     F(X) = 0,\ X = G(X) \Longrightarrow X^{(k+1)} = G\left(X^{(k)}\right)
@@ -919,7 +977,8 @@ Derivando $F$ y $G$ respecto de $x$ y de $y$, queda
     G_x(x,y) = \frac{y^2+1}{10}&,\ G_y(x,y) = \frac{xy}{5}
 \end{align*}
 
-Se especializa lo anterior en el punto $(x^{(0)}, y^{(0)})$ y se evalúa el criterio de convergencia:
+Se especializa lo anterior en el punto $(x^{(0)}, y^{(0)})$ y se evalúa el 
+criterio de convergencia:
 
 \begin{align*}
     |F_x(3,1)| + |F_y(3,1)| < 1\ &\land\ |G_x(3,1)| + |G_y(3,1)| < 1 \\
@@ -1008,7 +1067,8 @@ jacobian([x^2 + y^2 - 1, x^2 - y^2 - 1], [x, y]);
     \end{bmatrix}
 \end{equation*}
 
-Empezamos con $X^{(0)} = \begin{bmatrix}0.5\\0.5\end{bmatrix}$ y lo aplicamos a la fórmula (\ref{eq:Newton})
+Empezamos con $X^{(0)} = \begin{bmatrix}0.5\\0.5\end{bmatrix}$ y lo aplicamos a 
+la fórmula (\ref{eq:Newton})
 
 \begin{equation*}
     X^{(1)} = \begin{bmatrix}0.5\\0.5\end{bmatrix} - \begin{bmatrix}
@@ -1038,7 +1098,9 @@ $i$ & $x_i$   & $y_i$   \\
 
 \subsection{Newton simplificado}
 
-Si se trabaja la ecuación (\ref{eq:Newton}) y se llama $Z_{k+1} = \left(X_{k+1} - X_k\right)$, se llega a la fórmula simplificada de iteración de Newton. Evita tener que invertir el Jacobiano en cada iteración:
+Si se trabaja la ecuación (\ref{eq:Newton}) y se llama 
+$Z_{k+1} = \left(X_{k+1} - X_k\right)$, se llega a la fórmula simplificada de 
+iteración de Newton. Evita tener que invertir el Jacobiano en cada iteración:
 
 \begin{equation}\label{eq:Newton-Simp}
     J\left(X_k\right)\cdot Z_{k+1} = -F\left(X_k\right)
@@ -1062,7 +1124,8 @@ El Jacobiano es
     \end{bmatrix}
 \end{equation*}
 
-Empezamos en $X_0 = \begin{bmatrix}0.5\\0.5\end{bmatrix}$, con la ecuación (\ref{eq:Newton-Simp}):
+Empezamos en $X_0 = \begin{bmatrix}0.5\\0.5\end{bmatrix}$, con la ecuación 
+(\ref{eq:Newton-Simp}):
 
 \begin{equation*}
     \begin{bmatrix}
