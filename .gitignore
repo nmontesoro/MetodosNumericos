@@ -133,3 +133,5 @@ dmypy.json
 
 # Matlab
 *.asv
+/path
+make_links.bat
