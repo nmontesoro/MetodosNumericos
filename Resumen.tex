@@ -1101,7 +1101,7 @@ $J$ es el Jacobiano. Para dos $f$ y dos $x_i$,
 En Matlab se puede hallar con
 
 \begin{lstlisting}[language=Matlab]
-syms x1, x2, ..., xn
+syms x1 x2 ... xn
 jacobian([f1, f2, ..., fn], [x1, x2, ..., xn]);
 \end{lstlisting}
 
@@ -1117,7 +1117,7 @@ Sea el sistema
 Conseguimos el Jacobiano (se puede hacer a mano)
 
 \begin{lstlisting}[language=Matlab]
-syms x, y
+syms x y
 jacobian([x^2 + y^2 - 1, x^2 - y^2 - 1], [x, y]);
 \end{lstlisting}
 
