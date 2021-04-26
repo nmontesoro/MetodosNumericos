@@ -413,7 +413,7 @@ Se dice que un problema está mal condicionado cuando la solución es muy sensib
 a pequeños cambios en las variables de entrada (que pueden ser introducidos al 
 resolver el problema mediante la computadora).
 
-\section{Solución de ecuaciones lineales}
+\section{Solución de ecuaciones no lineales}
 
 Un número $\alpha$ se dice raíz de la ecuación $f(x)$ si $f(\alpha) = 0$.
 Los métodos numéricos para encontrar una raíz de una ecuación $f(x)$ son métodos
@@ -646,7 +646,7 @@ iteraciones son:
 \end{tabular}
 \end{table}
 
-\section{Sistemas de ecuaciones no lineales}
+\section{Sistemas de ecuaciones lineales y no lineales}
 
 \subsection{Normas matriciales}
 
@@ -738,6 +738,8 @@ Ejemplos:
     \item $||\delta A|| = 0\ \land\ \text{Cond}(A)\cdot\frac{||\delta b||}{||b||} = 2.319 \geq \frac{||\hat{X}-X||}{||X||}$ (utilizando \verb|norm(A, inf)|)
 \end{enumerate}
 
+
+\section{Solución de sistemas de ecuaciones lineales}
 \subsection{Método Jacobi}
 
 Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es 
@@ -925,9 +927,9 @@ B = -inv(tril(A))*triu(A, 1); c = inv(tril(A))*b; % one-liner
 El análisis de convergencia de éste método coincide con Jacobi, aunque suele 
 converger más rápido.
 
-\section{Sistemas de ecuaciones no lineales}
+\section{Solución de sistemas de ecuaciones no lineales}
 
-\subsection{Punto fijo}
+\subsection{Método de punto fijo}
 
 Sea un sistema de ecuaciones como el siguiente:
 
@@ -1011,7 +1013,7 @@ $i$ & $x_i$  & $y_i$  \\
 \end{tabular}
 \end{table}
 
-\subsection{Newton}
+\subsection{Método de Newton-Raphson}
 
 Sea un sistema de ecuaciones como el siguiente:
 
