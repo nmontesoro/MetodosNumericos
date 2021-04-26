@@ -919,6 +919,66 @@ B = -inv(tril(A))*triu(A, 1); c = inv(tril(A))*b; % one-liner
 El análisis de convergencia de éste método coincide con Jacobi, aunque suele 
 converger más rápido.
 
+\subsubsection{Ejemplo}
+
+Resolver el sistema
+
+\begin{equation*}
+    \begin{cases}
+        2x_1 - x_2 + x_3 &= -1  \\
+        3x_1 + 3x_2 + 5x_3 &= 4 \\
+        x_1 + x_2 + 3x_3 &= 0
+    \end{cases}
+\end{equation*}
+
+Conformamos las matrices necesarias:
+
+\begin{equation*}
+    A = \begin{bmatrix}
+        2 & -1 & 1 \\
+        3 &  3 & 5 \\
+        1 &  1 & 3
+    \end{bmatrix},\ 
+    b = \begin{bmatrix}
+        -1 \\
+         4 \\
+         0
+    \end{bmatrix}\ \Longrightarrow\ 
+    B = \begin{bmatrix}
+        0 &  \frac{1}{2} & \frac{-1}{2} \\
+        0 & \frac{-1}{2} & \frac{-7}{6} \\
+        0 &            0 &  \frac{5}{9}
+    \end{bmatrix},\ 
+    c = \begin{bmatrix}
+        \frac{-1}{2} \\
+        \frac{11}{6} \\
+         \frac{4}{5}
+    \end{bmatrix}
+\end{equation*}
+
+Y las aplicamos a la fórmula vectorial de iteración del método de Gauss-Seidel,
+empezando con $X_0=[0;0;0]$. Las primeras iteraciones son:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+    i & $x_1^{(i)}$ & $x_2^{(i)}$ & $x_3^{(i)}$ \\\hline
+    1 & -0.50000    & 1.83333     & -0.44444    \\
+    2 & 0.63889     & 1.43519     & -0.69136    \\
+    3 & 0.56327     & 1.92233     & -0.82853    \\
+    4 & 0.87543     & 1.83879     & -0.90474    \\
+    5 & 0.87177     & 1.96947     & -0.94708    \\
+    6 & 0.95827     & 1.95352     & -0.97060    \\
+    7 & 0.96206     & 1.98894     & -0.98367    \\
+    8 & 0.98630     & 1.98648     & -0.99093    \\
+    9 & 0.98870     & 1.99618     & -0.99496    \\
+   10 & 0.99557     & 1.99603     & -0.99720    \\
+   11 & 0.99661     & 1.99872     & -0.99844    \\
+   12 & 0.99858     & 1.99883     & -0.99914    \\
+   13 & 0.99898     & 1.99958     & -0.99952
+\end{tabular}
+\end{table}
+
 \section{Solución de sistemas de ecuaciones no lineales}
 
 \subsection{Método de punto fijo}
