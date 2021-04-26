@@ -788,6 +788,95 @@ Ejemplos:
 
 
 \section{Solución de sistemas de ecuaciones lineales}
+
+\subsection{Sustitución}
+
+Si la matriz $A$ es triangular superior, se puede despejar $x_n$ de la última
+ecuación (sustitución reversiva, regresiva o hacia atrás). Si $A$ es triangular 
+inferior se despeja $x_1$ de la primera ecuación (sustitución progresiva o 
+hacia adelante).
+
+\subsection{Eliminación de Gauss}
+
+Si la matriz $A$ no es triangular, puede convertirse mediante el método de 
+eliminación Gaussiana, cuya fórmula es la siguiente:
+
+\begin{equation*}
+\left( F_i - \left( \frac{a_{1i}}{a_{11}} \right) F_1 \right)\ \Rightarrow\ F_i^{(1)}
+\end{equation*}
+
+Primero se elimina el coeficiente de $x_1$ en la fila 2, luego el coeficiente de
+$x_2$ en la fila 3, luego...
+
+Aproximadamente son $\frac{2}{3}n^3+\frac{5}{2}n^2-\frac{1}{6}n$ operaciones.
+
+\subsection{Factorización LU}
+
+Resume el proceso de eliminación gaussiana aplicado a la matriz.
+
+Si la matriz $A$ $m\times n$ se puede escribir como el producto de dos matrices 
+$A=LU$, siendo $L$ una matriz triangular inferior $m\times m$ y $U$ una matriz
+escalonada $m\times n$. El sistema $Ax=b$ puede reescribirse como 
+$(LU)x=L(Ux)=b$.
+
+Una posible estrategia consiste en tomar $y = Ux$ y resolver el sistema $Ly=b$
+que, como $L$ es triangular inferior, puede ser hecho mediante sustitución
+progresiva. Encontrados los valores de $y$, las incógnitas al sistema inicial
+se encuentran despejando $x$ de $UX=y$ (al ser $U$ escalonada, se resuelve 
+mediante sustitución regresiva).
+
+Con Matlab se puede usar la función \verb|lu|:
+
+\begin{lstlisting}[language=Matlab]
+[L, U, P] = lu(A);
+\end{lstlisting}
+
+Siendo $P$ la matriz de permutaciones, tal que $PA=LU$. Luego se despeja $X$ 
+mediante \verb|X = U \ (L \ b)|.
+
+Ejemplo:
+
+Resolver el sistema $Ax=\begin{bmatrix}11 \\ 70 \\ 17\end{bmatrix}=b$
+
+\begin{equation*}
+    A = \begin{bmatrix}
+         4 & -2 &  1 \\
+        20 & -7 & 12 \\
+        -8 & 13 & 17
+    \end{bmatrix} = 
+    \begin{bmatrix}
+         1 & 0 & 0 \\
+         5 & 1 & 0 \\
+        -2 & 3 & 1 
+    \end{bmatrix} \cdot
+    \begin{bmatrix}
+        4 & -2 &  1 \\
+        0 &  3 &  7 \\
+        0 &  0 & -2
+    \end{bmatrix} = LU
+\end{equation*}
+
+Por eliminación directa del sistema $Ly=b$ ($y=Ux$) queda
+
+\begin{equation*}
+    y = \begin{bmatrix}
+        11 \\
+        15 \\
+        -6
+    \end{bmatrix}
+\end{equation*}
+
+Y resolviendo el sistema $Ux=y$, queda 
+
+\begin{equation*}
+    x = \begin{bmatrix}
+         1 \\
+        -2 \\
+         3 
+    \end{bmatrix}
+\end{equation*}
+
+
 \subsection{Método Jacobi}
 
 Es un método iterativo para resolver sistemas de la forma $AX=b$, donde $A$ es 
