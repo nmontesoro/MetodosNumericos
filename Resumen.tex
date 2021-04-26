@@ -650,7 +650,8 @@ iteraciones son:
 
 \subsection{Normas matriciales}
 
-Consiste en sumar los elementos (en valor absoluto) de filas o columnas y elegir el máximo. Hay tres formas posibles (qué es $X$?):
+Se trata de una extensión de la norma vectorial a las matrices. Hay tres formas
+de calcularlas:
 
 \begin{itemize}
     \item Norma euclidiana (norma 2), $||A||_2 = \text{max}_{x\to0} \frac{||AX||_2}{||X||_2}$. En Matlab, se calcula con \verb|norm(A)| o \verb|norm(A, 2)|.
@@ -659,6 +660,16 @@ Consiste en sumar los elementos (en valor absoluto) de filas o columnas y elegir
 \end{itemize}
 
 Se puede usar cualquier forma, pero es importante no mezclarlas en un mismo problema.
+
+Tienen las siguientes propiedades:
+
+\begin{itemize}
+    \item $||A||>0$ si $A\neq0$ y $||A||=0$ si y sólo si $A=0$.
+    \item $||\alpha A|| = |\alpha|\cdot||A||$.
+    \item $||A+B||\leq||A||+||B||$.
+    \item En el caso de matrices cuadradas, algunas cumplen que 
+        $||AB||\leq||A||\cdot||B||$.
+\end{itemize}
 
 \subsection{Condicionamiento del sistema}
 
