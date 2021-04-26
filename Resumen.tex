@@ -914,14 +914,6 @@ c = inv(T)*b;
 B = -inv(tril(A))*triu(A, 1); c = inv(tril(A))*b; % one-liner
 \end{lstlisting}
 
-\begin{equation}
-\begin{bmatrix}
-0 & \frac{-a_{12}}{a_{11}} & \frac{-a_{13}}{a_{11}} \\
-0 & \frac{a_{12}a_{21}}{a_{11}a_{22}} & \frac{a_{13}a_{21}}{a_{11}a_{22}} - \frac{a_{23}}{a_{22}} \\
-0 & \frac{-(a_{12}(a_{21}a_{32} - a_{22}a_{31}))}{a_{11}a_{22}a_{33}} & \frac{a_{23}a_{32}}{a_{22}a_{33}} - \frac{(a_{13}(a_{21}a_{32} - a_{22}a_{31}))}{a_{11}a_{22}a_{33}}
-\end{bmatrix}
-\end{equation}
-
 \subsubsection{Convergencia}
 
 El análisis de convergencia de éste método coincide con Jacobi, aunque suele 
