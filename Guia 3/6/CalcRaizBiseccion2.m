@@ -30,7 +30,7 @@ function [x, f_x, n, e] = CalcRaizBiseccion2(f, a, b, c)
 
         opt.a = a;
         opt.b = b;
-        opt.x_a = 9e10;
+        opt.x_a = NaN;
         opt.n = 1;
     
         while 1

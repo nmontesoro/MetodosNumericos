@@ -28,19 +28,18 @@ function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c, m)
 %   e: error absoluto entre los valores de x de la iteración final y la
 %       anterior
 
-    opt.x_a = x_0;
+    opt.x_a = NaN;
+    opt.x = x_0;
     opt.f_x = f(x_0);
     opt.g_x = g(x_0);
-    opt.n = 1;
+    opt.n = 0;
 
     if ~exist('m', 'var')
         m = 0;
     end
 
-    while 1
-        if opt.n ~= 1
-            opt.x_a = opt.x;
-        end
+    while ~c(opt)
+        opt.x_a = opt.x;
 
         if m
             opt.x = opt.x_a - m * opt.f_x / opt.g_x;
@@ -50,10 +49,6 @@ function [x, f_x, n, e] = CalcRaizNewton(f, g, x_0, c, m)
 
         opt.f_x = f(opt.x);
         opt.g_x = g(opt.x);
-
-        if c(opt)
-            break
-        end
 
         opt.n = opt.n + 1;
     end

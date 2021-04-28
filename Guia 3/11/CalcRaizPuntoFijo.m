@@ -27,11 +27,11 @@ function [x, f_x, n, e] = CalcRaizPuntoFijo(f, g, x_0, c)
 %       anterior
 
     opt.x = x_0;
-    opt.x_a = 9e10;
-    opt.n = 1;
+    opt.x_a = NaN;
+    opt.n = 0;
 
     while 1
-        if opt.n ~= 1
+        if opt.n ~= 0
             opt.x_a = opt.x;
             opt.x = opt.g_x;
         end
