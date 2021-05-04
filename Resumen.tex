@@ -1348,4 +1348,406 @@ Empezamos en $X_0 = \begin{bmatrix}0.5\\0.5\end{bmatrix}$, con la ecuación
     \end{bmatrix}
 \end{equation*}
 
+\section{Interpolación}
+
+Interpolar significa estimar el valor desconocido de una función en un punto,
+tomando una medida ponderada de sus valores conocidos en puntos cercanos al 
+dado.
+
+Dados $n+1$ puntos en $\mathbb{R}^2$, $(x_0,\ y_0)$, $(x_1,\ y_1)$, ..., 
+$(x_n, y_n)$, con $y_i = f(x_i)$ (y siendo $f(x)$ no necesariamente conocida) en
+los cuales $x_0$, $x_1$, ..., $x_n$ son números distintos que se distribuyen en
+el intervalo $\left[x_0,\ x_n\right]$, se quiere encontrar un polinomio $p_n(x)$
+de grado menor o igual a $n$ tal que:
+
+\[ p_n(x) = y_k,\ k=0,\ 1,\ ...,\ n\]
+
+Si para estimar el valor de $y$ se emplea el polinomio $p_n(x)$ que pasa por los
+puntos dados, la aproximación se denomina \emph{interpolación polinomial} 
+(lineal, si son sólo dos puntos) y a $p_n(x)$ se lo denomina \emph{polinomio de
+interpolación} o \emph{polinomio interpolante}.
+
+Si se estima el valor de $y=f(x)$ y
+
+\begin{itemize}
+    \item $x_0<x<x_n$ entonces $y$ es un \emph{valor interpolado}.
+    \item $x<x_0\ \lor\ x_n<x$ entonces $y$ es un \emph{valor extrapolado}.
+\end{itemize}
+
+\subsection{Existencia del polinomio único}
+
+Si en los $n+1$ puntos los valores de $x_i$ son números distintos, existe un 
+único polinomio de grado menor o igual que $n$ tal que $p_n(x_k) = y_k$ y se 
+conforma el sistema de forma $AX=b$
+
+\begin{equation*}
+    \begin{bmatrix}
+        1 & x_0 & {x_0}^2 & \dots & {x_0}^n \\
+        1 & x_1 & {x_1}^2 & \dots & {x_1}^n \\
+        \vdots & \vdots & \vdots & \vdots \\
+        1 & x_1 & {x_1}^2 & \dots & {x_1}^n \\
+    \end{bmatrix} \cdot
+    \begin{bmatrix}
+        a_0 \\
+        a_1 \\
+        \vdots \\
+        a_n
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        y_0 \\
+        y_1 \\
+        \vdots \\
+        y_n
+    \end{bmatrix}
+\end{equation*}
+
+Si $\text{det } A \neq 0$ el sistema tiene solución única.
+
+\subsubsection{Determinante de Vandermonde}
+
+\begin{equation*}
+    \text{det } A = \prod_{1\leq i < j \leq n} \left(x_i - x_j\right)
+\end{equation*}
+
+Si $x_i\neq x_j$ entonces $\text{det } A \neq 0$.
+
+En general, la matriz de coeficientes de este sistema resulta mal condicionada
+si dos abscisas están relativamente cerca.
+
+\subsection{Forma de Lagrange del polinomio interpolante}
+
+En general, 
+
+\[p_n(x) = \sum_{i=0}^{n} y_iL_i(x)\]
+
+donde
+
+\[ L_i(x) = \prod_{k=0,\ k\neq i}^{n} \frac{\left(x-x_k\right)}{x_i-x_k},\ i = 0,\ 1,\ ...,\ n\]
+
+Para $n+1$ puntos, los polinomios fundamentales de Lagrange $L_i$ son de grado
+$n$. Además, 
+
+\begin{equation*}
+    L_i(x) = \begin{cases}
+        1,\ &k=i \\
+        0,\ &k\neq i
+    \end{cases}
+\end{equation*}
+
+\subsubsection{Cota de error}
+
+\[ E(x) = f(x) - p_n(x) \approx \left| \frac{(x-x_0)(x-x_1)...(x-x_n)}{(n+1)!} f^{(n+1)} \epsilon(x) \right| \]
+
+donde $\epsilon(x)\ \in\ \left[ x_0,\ x_n \right]$  es un número que depende de 
+$x$.
+
+\subsection{Polinomio interpolante de Newton}
+
+Los polinomios interpolantes se calculan mediante un esquema recursivo:
+
+\begin{align*}
+    p_1(x) &= a_0 + a_1(x-x_0) \\
+    p_2(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) \\
+    p_3(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + a_3(x-x_0)(x-x_1)(x-x_2) \\
+    \vdots \\
+    p_n(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + ... + a_n(x-x_0)(x-x_1)...(x-x_n)
+\end{align*}
+
+\subsubsection{Determinación de coeficientes}
+
+Para determinar los coeficientes $a_0$, $a_1$, ..., $a_n$ despejamos de la 
+siguiente manera:
+
+\begin{align*}
+    p_n(x_0) = a_0 = f(x_0)\ &\Rightarrow\ a_0 = f(x_0) \\
+    p_n(x_1) = a_0 + a_1(x-x_0) = f(x_1)\ &\Rightarrow\ a_1 = \frac{f(x_1) - f(x_0)}{x_1 - x_0} \\
+    p_n(x_2) = a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) = f(x_2)\ &\Rightarrow\ ...\ \Rightarrow a_2 = \frac{\frac{f(x_2) - f(x_1)}{x_2-x_1} - \frac{f(x_1) - f(x_0)}{x_1 - x_0}}{x_2 - x_0}
+\end{align*}
+
+\subsubsection{Diferencias divididas}
+
+\begin{itemize}
+    \item La diferencia dividida cero de $f$ con respecto a $x_k$ es:
+
+    \[ f\left[x_k\right] = f(x_k),\ k=0,\ 1,\ ...,\ n \]
+
+    \item La diferencia dividida uno de $f$ con respecto a $x_k$ y $x_{k+1}$ es:
+
+    \[ f\left[x_k,\ x_{k+1}\right] 
+    = \frac{f\left[x_{k+1}\right] 
+    - f\left[x_k\right]}{x_{k+1} - x_k},\ 
+    k=0,\ 1,\ ...,\ n-1 \]
+
+    \item La diferencia dividida dos de $f$ con respecto a $x_k$, $x_{k+1}$ y 
+    $x_{k+2}$ es:
+
+    \[ f\left[x_k,\ x_{k+1},\ x_{k+2}\right] 
+    = \frac{f\left[x_{k+1},\ x_{k+2}\right] 
+    - f\left[x_k,\ x_{k+1}\right]}{x_{k+2} - x_k},\ 
+    k=0,\ 1,\ ...,\ n-2 \]
+
+    \item En general, se definen las $n-i+1$ diferencias divididas $i$ 
+    (progresivas) de $f$ con respecto a $x_k$, $x_{k+1}$, ..., $x_{k+i}$ como:
+
+    \[ f\left[x_k,\ x_{k+1},\ ...,\ x_{k+i}\right]  
+    = \frac{f\left[x_{k+1},\ x_{k+2},\ ...,\ x_{k+i}\right] 
+    - f\left[x_k,\ x_{k+1},\ ...,\ x_{k+i-1}\right]}{x_{k+1} - x_k},\ 
+    k=0,\ 1,\ ...,\ n-i \]
+\end{itemize}
+
+\subsubsection{Polinomio interpolante progresivo}
+
+Es de la forma
+
+\[ p_n(x) = f\left[x_0\right] + f\left[x_0,\ x_1\right](x-x_0) + 
+f\left[x_0,\ x_1,\ x_2\right](x-x_0)(x-x_1) + ... + 
+f\left[x_0,\ x_1,\ ...,\ x_n\right](x-x_0)...(x-x_{n-1})\]
+
+\subsubsection{Polinomio interpolante regresivo}
+
+Es de la forma 
+
+\[
+p_n(x) = f\left[x_n\right] + f\left[x_n,\ x_{n-1}\right](x-x_n) + 
+f\left[x_{n-2},\ x_{n-1},\ x_n\right](x-x_n)(x-x_{n-1}) + ... + 
+f\left[x_0,\ ...,\ x_n\right](x-x_n)...(x-x_1)
+\]
+
+\subsubsection{Estimación del error para el polinomio interpolante de Newton}
+
+Se puede demostrar que si existe una función $f$ definida sobre el intervalo
+$\left[x_0,\ x_n\right]$, $n$ veces diferenciable, entonces existe $\epsilon$ 
+tal que
+
+\[ f\left[x_0,\ x_1,\ ...,\ x_n\right] = \frac{f^{(n)}(\epsilon)}{n!} \]
+
+Considerando la fórmula del error de Lagrange, y usando la forma de Newton
+del polinomio interpolante para $f$ se tiene que:
+
+\[ 
+E(x) = f(x) - p_n(x) \approx 
+f\left[x_0,\ x_1,\ ...,\ x_n\right](x-x_0)(x-x_1)...(x-x_n)
+\]
+
+\subsection{Desventajas de los polinomios interpolantes}
+
+A medida que aumentan la cantidad de puntos también aumenta el grado del 
+polinomio. Un polinomio de grado alto puede tener oscilaciones muy marcadas,
+por lo que puede no ser apto para interpolar o representar una función. Se 
+sugiere intentar la interpolación localmente (por subintervalos).
+
+\subsection{Interpolación por segmentos}
+
+El proceso de aproximación sobre subintervalos se conoce como 
+\emph{interpolación segmentaria} o \emph{por segmentos}.
+
+La \emph{interpolación segmentaria lineal} interpola entre dos puntos 
+consecutivos con un polinomio lineal. La \emph{interpolación segmentaria 
+cuadrática} interpola entre dos puntos consecutivos con un polinomio cuadrático.
+Le \emph{interpolación segmentaria cúbica} interpola entre dos puntos 
+consecutivos con un polinomio cúbico.
+
+El conjunto de los distintos polinomios constituye un \emph{trazador}.
+
+\subsubsection{Trazador cúbico}
+
+Para asegurar que las derivadas $m$-ésimas sean continuas en los nodos, se debe
+emplear un trazador de un grado de, al menos, $m+1$.
+
+En la práctica se suelen usar polinomios de tercer grado o trazadores cúbicos 
+que aseguran primera y segunda derivadas continuas. Son $n$ polinomios de grado
+menor o igual que tres y cada uno con cuatro coeficientes incógnitas, por lo que
+se tienen $4n$ incógnitas por determinar ($a_k$, $b_k$, $c_k$ y $d_k$).
+
+\[
+p_3^{(k)}(x) \equiv p_k(x) = a_k + b_k(x-x_k) + c_k(x-x_k)^2 + d_k(x-x_k)^3,\ 
+k = 0,\ 1,\ ...,\ n-1
+\]
+
+Las condiciones que deben satisfacer estos polinomios son:
+
+\begin{itemize}
+    \item Condiciones de interpolación ($n+1$ ecuaciones):
+
+    \begin{equation*}
+        \begin{cases}
+            p_k(x_k) = f(x_k),\ k = 0,\ 1,\ ...,\ n-1 \\
+            p_{n-1}(x_n) = f(x_n)
+        \end{cases}
+    \end{equation*}
+
+    \item Condiciones de continuidad en los nodos interiores ($n-1$ ecuaciones):
+
+    \[ p_k(x_{k+1}) = p_{k+1}(x_{k+1}),\ k = 0,\ 1,\ ...,\ n-2 \]
+
+    \item Condiciones de derivabilidad en los nodos interiores ($n-1$ ecuaciones):
+
+    \[ p_k^\prime(x_{k+1}) = p_{k+1}^\prime(x_{k+1}),\ k = 0,\ 1,\ ...,\ n-2 \]
+
+    \item Condiciones de continuidad de la primera derivada en los nodos 
+    interiores: se conserva la concavidad en la vecindad del nodo interior, a no
+    ser que la segunda derivada sea cero en el nodo interior ($n-1$ ecuaciones).
+
+    \item Se satisface uno de los siguientes pares de \emph{condiciones de 
+    frontera}:
+
+    \begin{itemize}
+        \item 
+        ${p_0}^{\prime\prime}(x_0) = 0\ \land\ {p_{n-1}}^{\prime\prime}(x_n) = 0$
+        (condición a - trazador cúbico natural)
+
+        \item 
+        ${p_0}^\prime(x_0) = f^\prime(x_0)\ \land\ {p_{n-1}}^\prime(x_n) = f^\prime(x_n)$
+        (condición b - trazador cúbico de frontera sujeta)
+    \end{itemize}
+\end{itemize}
+
+En el caso de frontera natural, los coeficientes se determinan mediante el
+siguiente algoritmo. Se tiene el sistema $AX=b$:
+
+\begin{equation*}
+    A = \begin{bmatrix}
+        1 & 0 & 0 & 0 & \cdots & 0 \\
+        h_0 & 2(h_0 + h_1) & h_1 & 0 & \cdots & 0 \\
+        0 & \vdots & \ddots & \vdots & \vdots & \vdots \\
+        \vdots & \vdots & \vdots & h_{n-2} & 2(h_{n-2} + h_{n-1}) & h_{n-1} \\
+        0 & \cdots & \cdots & 0 & 0 & 1
+    \end{bmatrix},\ 
+    X = \begin{bmatrix}
+        c_0 \\
+        c_1 \\
+        \vdots \\
+        c_{n-1} \\
+        c_n
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+    B = \begin{bmatrix}
+        0 \\
+        \frac{3}{h_1}(a_2 - a_1) - \frac{3}{h_0} (a_1 - a_0) \\
+        \vdots \\
+        \frac{3}{h_{n-1}} (a_n - a_{n-1}) - \frac{3}{h_{n-2}}(a_{n-1} - a_{n-2}) \\
+        0
+    \end{bmatrix}
+\end{equation*}
+
+Donde $h_k = x_{k+1} - x_k$. De aquí se despejan los $c_k$. Luego se calculan 
+$a_k$, $b_k$ y $d_k$ como:
+
+\begin{align*}
+    a_k &= f(x_k) \\
+    b_k &= \frac{a_{k+1} - a_k}{h_k} - \frac{h_k}{3}(2c_k + c_{k+1}) \\
+    d_k &= \frac{c_{k+1} - c_k}{3h_k}
+\end{align*}
+
+Para el caso de frontera sujeta se obtienen los $c_k$ con el sistema:
+
+\begin{equation*}
+    A = \begin{bmatrix}
+        2h_0 & h_0 & 0 & 0 & \cdots & 0 \\
+        h_0 & 2(h_0 + h_1) & h_1 & 0 & \cdots & 0 \\
+        0 & \vdots & \ddots & \vdots & \vdots & \vdots \\
+        \vdots & \vdots & \vdots & h_{n-2} & 2(h_{n-2} + h_{n-1}) & h_{n-1} \\
+        0 & \cdots & \cdots & 0 & h_{n-1} & 2h_{n-1}
+    \end{bmatrix},\ 
+    X = \begin{bmatrix}
+        c_0 \\
+        c_1 \\
+        \vdots \\
+        c_{n-1} \\
+        c_n
+    \end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+    B = \begin{bmatrix}
+        \frac{3}{h_0} (a_1 - a_0) - 3f^\prime(x_0) \\
+        \frac{3}{h_1} (a_2 - a_1) - \frac{3}{h_0}(a_1 - a_0) \\
+        \vdots \\
+        \frac{3}{h_{n-1}} (a_n - a_{n-1}) - \frac{3}{h_{n-2}} (a_{n-1} - a_{n-2}) \\
+        3f^\prime(x_n) - \frac{3}{h_{n-1}} (a_n - a_{n-1})
+    \end{bmatrix}
+\end{equation*}
+
+El resto de los coeficientes se obtienen con las mismas fórmulas.
+
+Las \textbf{ventajas y desventajas del trazador cúbico} son las siguientes:
+
+\begin{itemize}
+    \item El algoritmo consiste en resolver un sistema de ecuaciones.
+    \item El sistema de ecuaciones es tridiagonal, con lo cual se puede 
+    simplificar la resolución.
+    \item Se pueden obtener soluciones con menos oscilaciones cuando hay muchos
+    puntos.
+    \item Es adecuado para describir formas eligiendo los puntos adecuados.
+    \item Para realizar una interpolación es necesario identificar el polinomio
+    correspondiente.
+    \item Cualquier cálculo aplicado al trazador tiene que repetirse para cada
+    polinomio, lo cual puede ser complicado cuando hay muchos puntos.
+\end{itemize}
+
+\subsection{Ajuste de un polinomio por mínimos cuadrados (regresión polinomial)}
+
+Consiste en encontrar el polinomio que mejor se ajuste a los datos, en el 
+sentido de que la distancia entre los puntos dados y los obtenidos mediante un
+polinomio sea mínima.
+
+\begin{equation*}
+    \sqrt{ \sum_{k=0}^{n} \left(p_m(x_k) - {y_k}\right)^2 }\ \lor\ 
+    \sum_{k=0}^{n} \left(p_m(x_k) - {y_k}\right)^2
+\end{equation*}
+
+Este criterio se conoce como \emph{mínimos cuadrados}, y el método para obtener 
+los polinomios que mejor se ajustan según mínimos cuadrados se llama 
+\emph{regresión polinomial}. Consiste en encontrar un $p_m(x)$ con $m<n$ tal que
+\[
+s(a_0,\ a_1,\ ...,\ a_m) = \sum_{k=0}^{n} \left(a_0 + a_1x_k + a_2{x_k}^2 + 
+\cdots + a_m{x_k}^m - y_k\right)^2
+\]
+sea mínima.
+
+Una condición necesaria para la existencia de un mínimo relativo de la función 
+$s$ es que las derivadas parciales con respecto a $a_j$ ($j=0,\ 1,\ ...,\ m$), 
+sean cero. Basándose en éste concepto, se llega a la expresión general:
+
+\[
+\sum_{i=0}^{m} \left( a_i \sum_{k=0}^{n} {x_k}^{i+j} \right) 
+= \sum_{k=0}^{n} {x_k}^jy_k
+\]
+
+Medir el \emph{error} es estimar la bondad del ajuste según mínimos cuadrados.
+Siendo $N$ la cantidad de puntos ($n+1$), se define:
+
+\begin{itemize}
+    \item Error: 
+    
+    \[E = \sum_{k=0}^{n} \left(p_m(x_k) - {y_k}\right)^2\]
+
+    \item Error cuadrático medio:
+
+    \[E_{\text{RMS}} = 
+    \sqrt{\frac{\sum_{k=0}^{n} \left(p_m(x_k) - {y_k}\right)^2}{N}} \]
+
+    \item Varianza:
+
+    \[ \sigma^2 = \frac{\sum_{k=0}^{n} \left(p_m(x_k) - {y_k}\right)^2}{N-m-1}\]
+\end{itemize}
+
+\subsubsection{Variantes de la regresión lineal}
+
+La \emph{función potencial} $y=cx^a$ se puede transformar en 
+
+\[ \log y = a\log x + \log c \]
+
+Usando las variables $x^\prime = \log x$, $y^\prime = \log y$ y $b = \log c$
+se obtiene la relación lineal $y^\prime = ax^\prime + b$.
+
+La \emph{función exponencial} $y = ce^{ax}$ se puede transformar en 
+
+\[ \ln y = ax + \ln c \]
+
+Usando las variables $x^\prime = x$ e $y = \ln y$ se obtiene la relación lineal
+$y^\prime = ax^\prime + b$, donde $b = \ln c$.
+
 \end{document}
