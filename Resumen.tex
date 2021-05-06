@@ -1384,8 +1384,8 @@ conforma el sistema de forma $AX=b$
     \begin{bmatrix}
         1 & x_0 & {x_0}^2 & \dots & {x_0}^n \\
         1 & x_1 & {x_1}^2 & \dots & {x_1}^n \\
-        \vdots & \vdots & \vdots & \vdots \\
-        1 & x_1 & {x_1}^2 & \dots & {x_1}^n \\
+        \vdots & \vdots & \vdots & \ddots & \vdots \\
+        1 & x_n & {x_n}^2 & \dots & {x_n}^n \\
     \end{bmatrix} \cdot
     \begin{bmatrix}
         a_0 \\
@@ -1450,7 +1450,7 @@ Los polinomios interpolantes se calculan mediante un esquema recursivo:
     p_2(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) \\
     p_3(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + a_3(x-x_0)(x-x_1)(x-x_2) \\
     \vdots \\
-    p_n(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + ... + a_n(x-x_0)(x-x_1)...(x-x_n)
+    p_n(x) &= a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + ... + a_n(x-x_0)(x-x_1)...(x-x_{n-1})
 \end{align*}
 
 \subsubsection{Determinación de coeficientes}
