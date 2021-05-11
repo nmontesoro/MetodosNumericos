@@ -22,7 +22,7 @@ function f = CalcPolinomioNewton(points, varargin)
     validGrado = @(n) n > 0 && n < size(points, 1);
     addRequired(parser, 'points', validPoints); 
     addOptional(parser, 'regresivo', false);
-    addParameter(parser, 'n', size(points, 1), validGrado);
+    addParameter(parser, 'n', size(points, 1) - 1, validGrado);
     addParameter(parser, 'coefs', NaN)
     parse(parser, points, varargin{:});
 
