@@ -1750,4 +1750,196 @@ La \emph{función exponencial} $y = ce^{ax}$ se puede transformar en
 Usando las variables $x^\prime = x$ e $y = \ln y$ se obtiene la relación lineal
 $y^\prime = ax^\prime + b$, donde $b = \ln c$.
 
+\section{Integración}
+
+\subsection{Fórmulas cerradas de Newton-Cotes}
+
+Consiste en dividir el intervalo $[a,\ b]$ en $n$ sub-intervalos de igual 
+logitud, $[x_0,\ x_1],\ ...,\ [x_{n-1},\ x_n]$, donde los $n+1$ puntos se
+obtienen a partir de la fórmula $x_k = a + kh$, siendo $h = \frac{b-a}{n}$ el
+\emph{tamaño de paso}. Entonces, $x_0 = a$, $x_n = b$, y $h = x_{k+1} - x_k$.
+
+Si $p_n(x) = \sum_{j = 0}^{n} f(x_j)\,L_j(x)$ es el polinomio de interpolación
+de Lagrange para la función $f$ en los nodos $x_0,\ x_1,\ ...,\ x_n$, entonces:
+
+\begin{equation*}
+    \int_a^b f(x)dx 
+    \approx \int_a^b p_n(x)dx
+    = \sum_{j=0}^{n} f(x_j) \int_a^b L_j(x) dx
+\end{equation*}
+
+Si llamamos $A_j = \int_a^b L_j(x) dx$, entonces
+
+\begin{equation*}
+    \int_a^b f(x)dx \approx \sum_{j=0}^{n} A_j f(x)
+\end{equation*}
+
+Análogamente, se deduce que
+
+\begin{equation*}
+\int_{x_k}^{x_{k+1}} p_k(x)dx = (x_{k+1} - x_k) \frac{f(x_k) - f(x_{k+1})}{2}
+\end{equation*}
+
+Siendo $n$ la cantidad de sub-intervalos,
+
+\begin{itemize}
+    \item Si $n = 1$, la fórmula se reduce a la \emph{regla simple de los
+    trapecios}:
+    \[ \int_{a}^{b} f(x)dx = \frac{b-a}{2}(f(a) - f(b))\]
+
+    \item Si $n>1$ la fórmula se conoce como la \emph{regla compuesta de los
+    trapecios}:
+    \[ 
+        \int_{a}^{b} f(x)dx 
+        \approx \frac{h}{2}\left[ f(a) + f(b) 
+        + 2 \sum_{k=1}^{n-1} f(x_k)\right]
+    \]
+\end{itemize}
+
+\subsubsection{Error}
+
+El error total $E_T$ que se comete al aplicar la regla compuesta de los 
+trapecios es la suma de los errores locales $E_k$:
+
+\begin{equation*}
+E_T = \sum_{k=0}^{n-1} E_k 
+= \sum_{k=0}^{n-1} - \frac{h^3}{12} f^{\prime\prime}\left(\epsilon_k(x)\right)
+= -h^2 \frac{b-a}{2} f^{\prime\prime} \left( \epsilon(x)\right),\ 
+\epsilon\in (a,\ b)
+\end{equation*}
+
+Si $\vert f^{\prime\prime}(x) \vert \leq L$ para todo $x\in[a,\ b]$,
+
+\begin{equation*}
+\vert E_t\vert \leq h^2 \frac{b-a}{12}L\ \Rightarrow\ O(h^2)
+\end{equation*}
+
+\subsection{Regla de Simpson 1/3}
+
+Consiste en aproximar la función $f$ con un polinomio de Lagrange de grado 2.
+Se deduce que
+
+\begin{equation*}
+\int_{x_k}^{x_{k+2}} f(x)dx 
+\approx (x_{k+2} - x_k) \frac{f(x_k) + 4\,f(x_{k+1}) + f(x_{k+2})}{6}
+= \frac{h}{3} \left[ f(x_k) + 4\,f(x_{k+1}) + f(x_{k+2})\right]
+\end{equation*}
+
+Luego, como $h = \frac{b-a}{2}$,
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx
+\approx \frac{b-a}{6} \left[ f(a) + 4\,f\left(\frac{a+b}{2}\right) + f(b)\right]
+\end{equation*}
+
+\subsection{Regla compuesta de Simpson 1/3}
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx = 
+\int_{x_0}^{x_2} f(x)dx + \int_{x_2}^{x_4} f(x)dx + ... + \int_{x_{n-2}}^{x_n} f(x)dx
+\approx \frac{h}{3} 
+\left[ f(a) + f(b) + 4\, \sum_{k=0}^{\frac{n-2}{2}} f(x_{2k+1}) 
++ 2\, \sum_{k=1}^{\frac{n-2}{2}} f(x_{2k}) \right]
+\end{equation*}
+
+Con $n = 2m$, $m\geq 2$, $m\in\mathbb{Z}$.
+
+\subsubsection{Error}
+
+\begin{equation*}
+E_T = 
+\sum_{k=0:2}^{n-2} E_k = 
+\sum_{k=0:2}^{n-2} -\frac{h^5}{90} f^{(IV)} (\epsilon_k) = 
+-h^5 \frac{n}{180}f^{(IV)}(\epsilon) =
+h^4 \frac{b-a}{180}f^{(IV)}(\epsilon)\ \Rightarrow\ O(h^4)
+\end{equation*}
+
+\subsection{Regla simple de Simpson 3/8}
+
+Se puede interpolar la función $f$ en cada sub-intervalo $[x_k,\ x_{k+3}]$ (con 
+$n$ un entero positivo múltiplo de 3) mediante un polinomio de Lagrange de grado
+menor o igual que 3, usando los nodos $x_k$, $x_{k+1}$, $x_{k+2}$, $x_{k+3}$.
+Queda:
+
+\begin{equation*}
+\int_{x_k}^{x_{k+3}} f(x)dx \approx
+\frac{3h}{8} \left[ f(x_k) + 3f(x_{k+1}) + 3f(x_{k+2}) + f(x_{k+3})\right]
+\end{equation*}
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx \approx
+\frac{b-a}{8} \left[f(a) + 3f\left(\frac{2a+b}{3}\right) 
++ 3f\left(\frac{a+2b}{3}\right) + f(b)\right]
+\end{equation*}
+
+\subsection{Regla compuesta de Simpson 3/8}
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx \approx
+\frac{3h}{8}\left[ f(a) + f(b) + 3 \sum_{k=0}^{\frac{n-3}{3}} f(x_{3k+1}) 
++ 3 \sum_{k=0}^{\frac{n-3}{3}} f(x_{3k+2}) 
++ 2 \sum_{k=1}^{\frac{n-3}{3}} f(x_{3k})  \right]
+\end{equation*}
+
+Con $n = 3m$, $m\geq 3$, $m\in\mathbb{Z}$.
+
+\subsubsection{Error}
+
+\begin{equation*}
+E_T = \sum_{k=0:3}^{n-3} E_k = 
+\sum_{k=0:3}^{n-3} -\frac{3h^5}{80}f^{(IV)}(\epsilon_k) =
+-h^5 \frac{n}{80} f^{(IV)}(\epsilon) =
+-h^4 \frac{b-a}{80} f^{(IV)}(\epsilon),\ \epsilon\in(a,\ b)\ \Rightarrow\ O(h^4)
+\end{equation*}
+
+\subsection{Integración de Romberg}
+
+Se obtiene una estimación del valor de una integral definida con base en dos o 
+más aplicaciones de una fórmula como la de los trapecios (o Simpson), empleando
+diferentes tamaños de intervalo.
+
+Si se aplica la regla de los trapecios sucesivamente para intervalos de tamaño
+$h_k$, se requiere conocer la función o disponer de $n=m_k+1=2^{k-1}+1$ puntos.
+
+\begin{equation*}
+h_k = \frac{h_{k-1}}{2} = \frac{b-a}{2^{k-1}}
+\end{equation*}
+
+La fórmula recursiva de Romberg para $2^{k-1}$ trapecios es:
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx = 
+\frac{h_k}{2} \left[ f(a) + f(b) + 2 \sum_{i=1}^{2^{k-1}-1} f(a + ih_k) \right]
+= R_{k,\ 1}
+\end{equation*}
+
+Utilizando la \emph{extrapolación de Richardson} se puede acelerar la 
+convergencia.
+
+\subsubsection{Extrapolación de Richardson}
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx = \frac{4R_{k,\ 1} - R_{k-1,\ 1}}{3}
+\end{equation*}
+
+En general, 
+
+\begin{equation*}
+R_{i,\ j} = \frac{4^{j-1} R_{i,\ j-1} - R_{i-1,\ j-1}}{4^{j-1} - 1},\ 
+i = 1,\ 2,\ ...,\ n,\ j = 2,\ ...,\ i
+\end{equation*}
+
+El procedimiento termina cuando, dada una tolerancia $\epsilon>0$, se satisface
+que $\vert R_{k,\ k-1} - R_{k,\ k}\vert < \epsilon$.
+
+\subsection{Integración adaptativa}
+
+Es la que implementa Matlab. A diferencia de Romberg, en vez de empezar por 
+trapecios lo hace por Simpson 1/3, y el ajuste sólo se aplica en los intervalos
+donde no se obtiene la aproximación requerida.
+
+\begin{equation*}
+\int_{a}^{b} f(x)dx = \frac{16R_{k,\ 1} - R_{k-1,\ 1}}{15}
+\end{equation*}
+
 \end{document}
