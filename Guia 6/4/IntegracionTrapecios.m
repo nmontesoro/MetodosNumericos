@@ -39,7 +39,7 @@ function val = IntegracionTrapecios(varargin)
             n = 1;
         end
 
-        if isnan(f) || isnan(a) || isnan(b)
+        if ~isa(f, 'function_handle') || isnan(a) || isnan(b)
             error('Faltan parámetros')
         else
             X = linspace(a, b, n + 1);
