@@ -1,4 +1,20 @@
 function val = IntegracionTrapecios(varargin)
+%IntegracionTrapecios - Aproxima la integral de una función o de una 
+%   serie de puntos mediante el método de trapecios.
+%
+% Syntax: val = IntegracionTrapecios(params)
+%
+% Input:
+%   a: valor inicial de x.
+%   b: valor final de x.
+%   f: función a la cual calcular la integral.
+%   points: matriz de puntos. Formato: [x1, y1; ...; xn, yn].
+%   n: (opcional) cantidad de subintervalos a utilizar. Si no se 
+%       especifica, se utiliza (cant. de puntos) - 1, o 1 si se pasa una
+%       función f como parámetro.
+%
+% Output:
+%   val: valor aproximado de la integral.
     parser = inputParser;
     isValidN = @(n) ~isinf(n) && floor(n) == n && n >= 1;
     addParameter(parser, 'a', NaN);
