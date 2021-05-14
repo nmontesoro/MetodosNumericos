@@ -1,4 +1,4 @@
-function val = IntegracionSimpson(points, varargin)
+function [val, points] = IntegracionSimpson(points, varargin)
 %IntegracionSimpson - Integra una función o un conjunto de puntos 
 %   con las reglas de Simpson (1/3 o 3/8, según se pida)
 %
@@ -13,6 +13,7 @@ function val = IntegracionSimpson(points, varargin)
 %
 % Output:
 %   val: valor aproximado de la integral.
+%   points: puntos utilizados en el cálculo.
 
     isValidMetodo = @(x) x == 1/3 || x == 3/8;
     parser = inputParser();
