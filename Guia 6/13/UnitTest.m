@@ -53,3 +53,22 @@ assert(err_abs(R11, 1323) < 1e-6);
 assert(err_abs(R21, 1503.9) < 1e-6);
 assert(err_abs(R22, 1564.2) < 1e-6);
 assert(errored);
+
+%% Test 4: Comprobación de condiciones iniciales
+errored = false;
+
+try
+    % Cantidad de puntos
+    val = IntegracionRomberg([], 6, 4);
+catch
+    errored = true;
+end
+
+try
+    % i debe ser <= j
+    val = IntegracionRomberg([], 4, 5);
+catch
+    errored = errored && true;
+end
+
+assert(errored);
