@@ -29,6 +29,10 @@ function val = IntegracionRomberg(points, i, j, varargin)
     f = NaN;
     N = 0;
 
+    if i < j
+        error('R%d,%d no está definido.', i, j)
+    end
+
     if isa(points, 'function_handle')
         if isnan(a) || isnan(b)
             error('Faltan parámetros a o b.')
