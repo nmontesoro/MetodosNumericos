@@ -38,6 +38,10 @@ function val = IntegracionRomberg(points, i, j, varargin)
         end
     else
         N = size(points, 1);
+        m = 2^(i - 1) + 1;
+        if N < m
+            error('Necesito al menos %d puntos!', m)
+        end
         a = points(1, 1);
         b = points(N, 1);
         val = romberg_p(i, j);
