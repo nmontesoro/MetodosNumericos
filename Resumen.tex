@@ -1942,4 +1942,222 @@ donde no se obtiene la aproximación requerida.
 \int_{a}^{b} f(x)dx = \frac{16R_{k,\ 1} - R_{k-1,\ 1}}{15}
 \end{equation*}
 
+
+\section{Ecuaciones diferenciales - Problemas de Valor Inicial (PVI)}
+
+Dada una ecuación diferencial $\frac{dy}{dt} = f(t,\,y)$, mediante técnicas de
+cálculo primitivas se puede obtener la familia de funciones $y(t) = y + C$. Los 
+métodos numéricos permiten obtener valores aproximados $Y_t$ de la solución, en
+puntos $t$ igualmente espaciados. Considerando $\phi(t)$ a los valores exactos 
+de $y$ en cada punto $t$,
+
+\[ Y_{t_i} \approx y(t_i) = \phi(t_i) \]
+
+La curva elegida de la familia se establece a partir del valor de la función $y$
+en el \emph{valor inicial} de la variable independiente.
+
+\subsection{Método de Euler o de la recta tangente}
+
+Teniendo la ecuación diferencial $\frac{dy}{dt} = f(t,\,y)$ y considerando un 
+intervalo $t_0 \leq t \leq t_m$ (con $m+1$ puntos), y conociendo la condición
+inicial $y(t_0) = y_0$, se obtiene un valor aproximado $Y_1$ de $y(t_1)$ 
+moviendose a lo largo de una recta tangente desde $t_0$ hasta $t_1$. En general,
+si llamamos $h = t_{k-1} - t_k$,
+
+\[ Y_{k+1} = Y_{k} + h \cdot f(t_k,\, Y_k) \]
+
+\subsubsection{Error}
+
+Usando la serie de Taylor alrededor del punto $t_k$ se deduce la fórmula de 
+Euler y, además, el error local,
+
+\[ \frac{h^2}{2!} \phi^{\prime\prime}(t_k),\ e_{k+1} = O(h^2) \]
+
+El error acumulado surge de sumar estos errores locales, quedando 
+
+\[ h \left( \frac{T-t_0}{2} \phi^{\prime\prime}(\epsilon_k) \right) 
+    = Ch = O(h) \]
+
+(si $h$ se reduce a la mitad, el error también se reduce en esa cantidad).
+
+\subsection{Método de Euler mejorado, o método Heun}
+
+Surge de aproximar mediante la media aritmética de los valores en los extremos
+del intervalo, y reemplazar la incógnita $Y_{k+1}$ que queda en el segundo 
+miembro por el valor que se obtiene usando la fórmula de Euler sencilla:
+
+\[
+    Y_{k+1} = Y_k + \frac{h}{2}\left[ f(t_k,\,Y_k) + f(t_{k+1},\, 
+    Y_k + h \cdot f(t_k,\, Y_k)) \right]
+\]
+
+\subsubsection{Error}
+
+\[
+    \frac{t_1 - t_0}{12} y^{\prime\prime} (\epsilon) h^2 = O(h^2)
+\]
+
+Si se toma la mitad del paso, se reduce el error a la cuarta parte.
+
+\subsection{Método de la serie de Taylor}
+
+\[
+    Y_{k+1} = Y_k + h \cdot Y^\prime_k + \frac{h^2}{2}\cdot Y^{\prime\prime}_k
+\]
+
+\subsubsection{Error}
+
+\[
+    \frac{1}{6} h^3\phi^{\prime\prime\prime} (\epsilon_k)
+\]
+
+\subsection{Método de Runge-Kutta}
+
+Se fundamenta en el método de la serie de Taylor sin tener que calcular 
+derivadas parciales de $y$. Existen métodos de Runge-Kutta de diferentes 
+órdenes, definidos por el orden de la derivada en el término de la serie de 
+Taylor donde ésta se corte (el método de orden 1 es Euler, el método de orden 2
+es Euler modificado, ...)
+
+La siguiente es la fórmula general de Runge-Kutta de segundo orden:
+
+\begin{equation*}
+    Y_{k+1} = Y_k + aK_1 + bK_2,\text{ con }
+    \begin{cases}
+        K_1 &= h\cdot f(t_k,\,Y_k) \\
+        K_2 &= h\cdot f(t_k + \alpha h,\, Y_k + \beta K_1)
+    \end{cases}
+\end{equation*}
+
+Se deben encontrar los valores de $a$, $b$, $\alpha$ y $\beta$ tales que la 
+fórmula tenga la exactitud del método de los tres primeros términos de la serie
+de Taylor. Para $a=b=\frac{1}{2}$ y $\alpha = \beta = 1$ coincide con la fórmula
+de Heun (Euler mejorado).
+
+La fórmula de Runge-Kutta que más se utiliza es la de orden cuarto, equivalente
+a la fórmula de los cinco primeros términos de la serie de Taylor, con error 
+local de orden $O(h^5)$ y error total de orden $O(h^4)$, siempre y cuando la 
+solución tenga las primeras cinco derivadas continuas.
+
+\begin{equation*}
+\begin{cases}
+    Y_0 &= y(t_0) = y_0 \\
+    Y_{k+1} &= Y_k + \frac{1}{6} (K_1 + 2K_2 + 2K_3 + K_4) \\
+    K_1 &= h \cdot f(t_k,\, Y_k) \\
+    K_2 &= h \cdot f(t_k + \frac{1}{2}h,\, Y_k + \frac{1}{2}K_1) \\
+    K_3 &= h \cdot f(t_k + \frac{1}{2}h,\, Y_k + \frac{1}{2}K_2) \\
+    K_4 &= h \cdot f(t_k + h,\, Y_k + K_3)
+\end{cases}
+\end{equation*}
+
+\subsection{Sistemas de EDOs de primer orden}
+
+Se tiene el sistema
+
+\begin{equation*}
+\begin{cases}
+    \frac{dx}{dt} &= f_1(t,\,x,\,y) \\
+    \frac{dy}{dt} &= f_2(t,\,x,\,y) \\
+    x(t_0) &= x_0 \\
+    y(t_0) &= y_0
+\end{cases}
+\end{equation*}
+
+Y se aplica algún método (preferentemente Runge-Kutta de cuarto orden) a cada
+una de las ecuaciones del sistema.
+
+\subsection{Sistemas de EDOs de orden $N$}
+
+Se transforma el sistema en uno de EDOs de primer orden, despejando el 
+diferencial de mayor orden y reemplazando las funciones por otras equivalentes,
+para así eliminar las diferenciales de orden superior. Por ejemplo:
+
+\begin{equation*}
+\begin{cases}
+    t^2 y^{\prime\prime} - 2ty^\prime + 2y = t^3\ln(t) \\
+    y(1) = 1 \\
+    y^\prime(1) = 0 \\
+    1 \leq t \leq 1.5
+\end{cases}
+\end{equation*}
+
+\begin{equation*}
+    y^{\prime\prime} = \frac{2}{t}y^\prime - \frac{2}{t^2}y + t\ln(t)
+\end{equation*}
+
+\begin{align*}
+    y^\prime = g = f_1(t,\,y,\,g) \\
+    y^{\prime\prime} = g^\prime = \frac{2}{t}g - \frac{2}{t^2}y + t\ln(t) 
+    = f_2(t,\,y,\,g) \\
+    y(1) = 1 \\
+    g(1) = 0
+\end{align*}
+
+\section{Ecuaciones diferenciales - Problemas de valores de frontera (PVF)}
+
+Son EDOs de segundo orden, donde se conocen los valores de la función en los 
+extremos del intervalo.
+
+\subsection{Método del disparo}
+
+Si se desconoce el valor inicial, se intenta establecer el valor de la derivada
+en el punto inicial. Consiste en:
+
+\begin{itemize}
+    \item Estimar un valor inicial para el ``ángulo de disparo'', 
+    $d_1 = {x_1}^\prime(a)$. Si se desconoce el problema como para estimarlo, 
+    tomamos un valor arbitrario.
+
+    \item Hacer los cálculos (mediante los métodos de PVI) y obtener un valor 
+    final de ${x_1}(b)$ (que puede o no coincidir con el valor buscado).
+
+    \item Corregir el ``ángulo de disparo'', $d_2 = {x_2}^\prime(a)$.
+
+    \item Calcular ${x_2}(b)$.
+
+    \item Obtener una mejora $d_3 = {x_3}^\prime(a)$ mediante interpolación 
+    lineal de los $x(b)$, y obtener un nuevo ${x_3}(b)$:
+
+    \[
+        d_3 = d_1 + \frac{{x_3}(b) - {x_1}(b)}{{x_2}(b) - {x_1}(b)}\,(d_2 - d_1)
+    \]
+
+    \item Si $d_3$ no cumple con el criterio de parada, se vuelve a realizar el
+    paso anterior con las dos pendientes que más se acercaron.
+\end{itemize}
+
+\subsection{Método de las diferencias finitas}
+
+Se reemplazan todas las derivadas de primer y segundo orden por diferencias
+centralizadas en cada uno de los puntos a calcular, obteniendo un sistema de 
+ecuaciones con incógnitas $x(t_k)$:
+
+\[
+    x^\prime(t_j) = \frac{x(t_{j+1}) - x(t_{j-1})}{2h}
+\]
+
+\[
+    x^{\prime\prime}(t_j) = \frac{x(t_{j+1}) - 2x(t_j) + x(t_{j-1})}{h^2}
+\]
+
+\section{Ecuaciones en derivadas parciales (EDP)}
+
+Son ecuaciones diferenciales donde aparecen dos o más variables independientes.
+Para dos variables independientes, se pueden expresar como:
+
+\[
+    A\,\frac{\partial^2u}{\partial x^2}
+    + B\,\frac{\partial^2u}{\partial x\partial y}
+    + C\,\frac{\partial^2u}{\partial y^2} + D = 0
+\]
+
+Hay básicamente tres tipos de problemas:
+
+\begin{itemize}
+    \item Ecuación de calor/difusión (parabólica) ($B^2-4AC=0$).
+    \item Ecuación de onda (hiperbólica) ($B^2-4AC>0$).
+    \item Otros sistemas físicos (ecuaciones de Laplace o Poisson) (elípticas)
+    ($B^2-4AC<0$).
+\end{itemize}
+
 \end{document}
