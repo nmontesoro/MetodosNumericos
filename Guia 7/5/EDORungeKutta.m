@@ -1,4 +1,26 @@
 function [Y, X] = EDORungeKutta(orden, f, intervalo, h, cond_inic, varargin)
+%EDORungeKutta - Calcula la solución de una Ecuación Diferencial Ordinaria
+%   mediante alguno de los métodos de Runge-Kutta.
+%
+% Syntax: [Y, X] = EDORungeKutta(orden, f, intervalo, h, cond_inic, ...)
+%
+% Input:
+%   orden: orden del método (2, 3, 4 o 5)
+%   f: función de la EDO (dy/dx = f(x, y))
+%   intervalo: vector [a, b] (a < x < b)
+%   h: paso
+%   cond_inic: y(a)
+%   parámetros posibles:
+%       a2: valor que caracteriza al método de orden 2. Según Chapra,
+%           capítulo 25:
+%               Si a2 = 0.5 --> Heun (por defecto)
+%                         1 --> Punto medio
+%                       2/3 --> Ralston
+%
+% Output:
+%   Y: vector de las aproximaciones encontradas de la solución
+%   X: vector de los valores utilizados de x
+    
     validOrden = @(o) floor(o) == o && (o >= 2 && o <= 5);
     validF = @(f) isa(f, 'function_handle');
     validIntervalo = @(intervalo) (all(size(intervalo) == [2, 1]) || ...
@@ -37,9 +59,6 @@ function [Y, X] = EDORungeKutta(orden, f, intervalo, h, cond_inic, varargin)
     
     function [Y, X] = rk2(a2, f, m, X, Y, h)
         % Según Chapra, 25.3.1.
-        % Si a2 = 0.5 --> Heun
-        %           1 --> Punto medio
-        %         2/3 --> Ralston
         a1 = 1 - a2;
         p1 = 1 / (2*a2);
         q11 = p1;
