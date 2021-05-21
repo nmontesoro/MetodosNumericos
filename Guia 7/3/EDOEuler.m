@@ -40,16 +40,14 @@ function [Y, X] = EDOEuler(f, intervalo, h, cond_inic, varargin)
     Y = zeros(m, 1);
     X = zeros(m, 1);
     Y(1) = cond_inic;
-    X(m) = b;
+    X = (a + h .* [0:m-1]).';
 
     if ~mejorado
         for i = 0:m - 2
-            X(i + 1) = a + h * i;
             Y(i + 2) = Y(i + 1) + h * f(X(i + 1), Y(i + 1));
         end
     else
         for i = 1:m - 1
-            X(i + 1) = a + h * i;
             Y(i + 1) = Y(i) + h / 2 * (f(X(i), Y(i)) ...
                      + f(X(i + 1), Y(i) + h * f(X(i), Y(i))));
         end
