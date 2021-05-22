@@ -38,7 +38,6 @@ function [Y, X] = EDOEuler(f, intervalo, h, cond_inic, varargin)
 
     m = floor((b - a) / h) + 1;
     Y = zeros(m, 1);
-    X = zeros(m, 1);
     Y(1) = cond_inic;
     X = (a + h .* [0:m-1]).';
 
