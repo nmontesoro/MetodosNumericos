@@ -40,7 +40,7 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
 
     a = intervalo(1);
     b = intervalo(2);
-    m = floor((b - a) / h) + 1;
+    m = floor(round((b - a) / h, 2)) + 1; % round por error de redondeo!
     metodo = parser.Results.metodo;
 
     [isValidF, n] = ValidateF(f);
