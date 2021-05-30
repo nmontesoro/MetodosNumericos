@@ -95,7 +95,6 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
         % Runge-Kutta de orden 2, basado en Chapra
         a1 = 1 - a2;
         p1 = 1 / (2*a2);
-        q11 = p1;
         K = zeros(3, n);
         coef = [0, 0, p1];
 
