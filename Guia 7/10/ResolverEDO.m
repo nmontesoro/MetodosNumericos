@@ -74,7 +74,7 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
     function X = euler(X)
         for i = 1:m - 1
             for j = 1:n
-                X(i + 1, 2:n + 1) = X(i, 2:n + 1) + h * f{j}(X(i, :));
+                X(i + 1, j + 1) = X(i, j + 1) + h * f{j}(X(i, :));
             end
         end
     end
