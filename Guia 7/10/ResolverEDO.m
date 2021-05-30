@@ -67,6 +67,18 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
         X = rk2(X);
     case 'rk4'
         X = rk4(X);
+    case 'eulerm'
+        a2 = 0.5;
+        X = rk2(X);
+    case 'heun'
+        a2 = 0.5;
+        X = rk2(X);
+    case 'pm'
+        a2 = 1;
+        X = rk2(X);
+    case 'ralston'
+        a2 = 2/3;
+        X = rk2(X);
     otherwise
         error('No se reconoce el método, o no ha sido implementado aún.')
     end
