@@ -29,6 +29,7 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
     isValidIntervalo = @(intervalo) (all(size(intervalo) == [2, 1]) || ...
         all(size(intervalo) == [1, 2])) && intervalo(1) < intervalo(2);
     isValidH = @(h) h > 0;
+    isValidA2 = @(a2) ~isnan(a2);
 
     parser = inputParser();
     addRequired(parser, 'f');
@@ -36,12 +37,14 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
     addRequired(parser, 'h', isValidH);
     addRequired(parser, 'cond_inic');
     addOptional(parser, 'metodo', 'rk4', isValidMetodo);
+    addParameter(parser, 'a2', 0.5, isValidA2);
     parse(parser, f, intervalo, h, cond_inic, varargin{:});
 
     a = intervalo(1);
     b = intervalo(2);
     m = floor(round((b - a) / h, 2)) + 1; % round por error de redondeo!
     metodo = parser.Results.metodo;
+    a2 = parser.Results.a2;
 
     [isValidF, n] = ValidateF(f);
 
@@ -60,6 +63,8 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
     switch metodo
     case 'euler'
         X = euler(X);
+    case 'rk2'
+        X = rk2(X);
     case 'rk4'
         X = rk4(X);
     otherwise
@@ -71,6 +76,28 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
             for j = 1:n
                 X(i + 1, 2:n + 1) = X(i, 2:n + 1) + h * f{j}(X(i, :));
             end
+        end
+    end
+
+    function X = rk2(X)
+        % Runge-Kutta de orden 2, basado en Chapra
+        a1 = 1 - a2;
+        p1 = 1 / (2*a2);
+        q11 = p1;
+        K = zeros(3, n);
+        coef = [0, 0, p1];
+
+        for i = 1:m - 1
+            % Calculo los valores de K para esta iteración
+            for ik = 2:3
+                for j = 1:n
+                    K(ik, j) = f{j}(X(i, :) + coef(ik) * h * [1, K(ik - 1, :)]);
+                end
+            end
+
+            % Ahora calculo los valores de X de la próxima iteración
+            X(i + 1, 2:n + 1) = X(i, 2:n + 1) + h * (a1 * K(2, :) ...
+                                + a2 * K(3, :));
         end
     end
 
