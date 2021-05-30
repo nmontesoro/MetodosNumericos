@@ -5,14 +5,16 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
 % Syntax: [X] = ResolverEDO(input)
 %
 % Input:
-%   metodo: Indica el método a utilizar. Las opciones son euler, eulerm,
-%       heun, pm, ralston, rk2, rk3, (rk4), rk5.
 %   f: cell array conteniendo las funciones del sistema (debe ser un 
 %       array, incluso si se compone de una única función). Ver 
 %       documentación adicional.
-%   intervalo: vector [a, b] (a < x < b)
+%   intervalo: vector [a, b] (a < x < b), siendo x la variable 
+%       independiente del sistema.
 %   h: paso
-%   cond_inic: vector de condiciones iniciales.
+%   cond_inic: vector de condiciones iniciales de las variables 
+%       dependientes.
+%   metodo: Indica el método a utilizar. Las opciones son euler, eulerm,
+%       heun, pm, ralston, rk2, rk3, (rk4), rk5.
 %   parámetros posibles:
 %       a2: valor que caracteriza al método de orden 2. Según Chapra,
 %           capítulo 25:
@@ -58,7 +60,8 @@ function [X] = ResolverEDO(f, intervalo, h, cond_inic, varargin)
 
     X = zeros(m, n + 1); % Reservo memoria
     X(1, 2:n + 1) = cond_inic; % Seteo las condiciones iniciales
-    X(:, 1) = (a + h .* [0:m-1]).'; % Genero los valores de t
+    % Genero los valores de la variable independiente
+    X(:, 1) = (a + h .* [0:m-1]).';
 
     switch metodo
     case 'euler'
