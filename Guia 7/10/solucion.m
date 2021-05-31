@@ -55,7 +55,7 @@ function addToCfg(points, label)
 end
 
 function val = calcErrorPromedio(points1, points2)
-    val = sum(abs(points1(:, 2) - points2(:, 3)));
+    val = sum(abs(points1(:, 3) - points2(:, 3)));
     n = size(points1, 1);
     val = val / n;
 end
