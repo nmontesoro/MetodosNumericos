@@ -42,9 +42,13 @@ hold off
 % TODO: (c) Comparar los resultados con el comando ode45 de Matlab
 
 % Comparo sólo los de RK4
-% [t, y] = ode45(@ode45handle, [0, 0.2], [6, 4]);
-% ode45points = [t, y];
-% fprintf('Error promedio entre ODE45 y RK4: %3.2e\n', calcErrorPromedio(points, ode45points))
+[t, y] = ode45(@ode45handle, [0, 0.2], [6, 4]);
+ode45points = [t, y];
+% ode45 usa h = 0.005 y creo que no se puede cambiar
+% Hago esto para comparar con los mismos valores de x
+ode45points = ode45points(1:4:size(ode45points, 1), :);
+fprintf('Error promedio entre ODE45 y RK4: %3.2e\n', ...
+       calcErrorPromedio(points, ode45points))
 
 function addToCfg(points, label)
     plot(points(:, 2), points(:, 3), 'DisplayName', label)
