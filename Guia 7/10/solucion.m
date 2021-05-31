@@ -50,6 +50,10 @@ ode45points = ode45points(1:4:size(ode45points, 1), :);
 fprintf('Error promedio entre ODE45 y RK4: %3.2e\n', ...
        calcErrorPromedio(points, ode45points))
 
+% Error promedio entre ODE45 y RK4: 1.37e-06. Es igual al que conseguí 
+%   con ResolverEDO, lo que indica que mi función produce resultados
+%   tan buenos como ode45.
+
 function addToCfg(points, label)
     plot(points(:, 2), points(:, 3), 'DisplayName', label)
 end
