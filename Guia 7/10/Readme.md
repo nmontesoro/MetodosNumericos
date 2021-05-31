@@ -70,3 +70,66 @@ El resultado es:
 | 0.16000 | 9.29021 | 9.67460 |
 | 0.18000 | 9.88827 | 10.65606 |
 | **0.20000** | **10.53962** | **11.71578** |
+
+### Ecuación diferencial de orden 2
+#### Euler
+El ejemplo dado por la cátedra consiste en calcular `y(0.6)`, siendo la 
+ecuación diferencial `y'' + 5xy' - y = 20x`, utilizando un paso `h = 0.2`, 
+mediante el método de Euler.
+
+Siguiendo ese ejemplo, se define `u = y'`, por lo que `u' = du/dx = y''` y se
+conforma el siguiente sistema de ecuaciones diferenciales:
+
+```
+u' = 20x - 5xu + y = f_1(x, y, u)
+y' = u = f_2(x, y, u)
+```
+
+En Matlab, se definirían las funciones de esta manera:
+
+```
+f_1 = @(X) 20 * X(1) - 5 * X(1) * X(3) + X(2);
+f_2 = @(X) X(3);
+```
+
+Y se resuelve con el siguiente comando:
+
+```
+X = ResolverEDO({f_2, f_1}, [0, 0.6], 0.2, [0, 2], 'euler')
+```
+
+Nótese que cambia el orden de F `{f_2, f_1}`, porque se sigue el orden de las
+variables dependientes: `f(x, y, u) --> dy/dx, du/dx`. El resultado es:
+
+|    x    |    y    |    u    |
+| ------- | ------- | ------- |
+| 0.00000 | 0.00000 | 2.00000 |
+| 0.20000 | 0.40000 | 2.00000 |
+| 0.40000 | 0.80000 | 2.48000 |
+| 0.60000 | 1.29600 | 3.24800 |
+
+#### Euler mejorado (h = 0.05)
+Se utilizan las mismas definiciones del ejemplo anterior, pero cambiando el 
+llamado a `ResolverEDO`:
+
+```
+X = ResolverEDO({f_2, f_1}, [0, 0.6], 0.05, [0, 2], 'eulerm')
+```
+
+El resultado es:
+
+|    x    |    y    |    u    |
+| ------- | ------- | ------- |
+| 0.00000 | 0.00000 | 2.00000 |
+| 0.05000 | 0.10000 | 2.01500 |
+| 0.10000 | 0.20150 | 2.05936 |
+| 0.15000 | 0.30593 | 2.13156 |
+| 0.20000 | 0.41464 | 2.22913 |
+| 0.25000 | 0.52883 | 2.34885 |
+| 0.30000 | 0.64951 | 2.48688 |
+| 0.35000 | 0.77751 | 2.63902 |
+| 0.40000 | 0.91341 | 2.80089 |
+| 0.45000 | 1.05759 | 2.96815 |
+| 0.50000 | 1.21022 | 3.13671 |
+| 0.55000 | 1.37127 | 3.30287 |
+| 0.60000 | 1.54052 | 3.46344 |
