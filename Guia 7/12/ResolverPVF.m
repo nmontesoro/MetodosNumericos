@@ -18,9 +18,11 @@ function X = ResolverPVF(intervalo, h, cond_frontera, metodo, varargin)
 %       metodo_integracion: indica el método de integración a utilizar
 %           (euler, heun, rk...). Acepta todos los valores posibles para
 %           ResolverEDO.
-%       coef: vector de coeficientes de la ecuación diferencial para el método
-%           de diferencias finitas (Ay'' + By' + Cy = f(x) => [A, B, C])
-%       f: cell array conteniendo las funciones del sistema.
+%       coef: cell array de coeficientes de la ED para el método de 
+%           dif. finitas 
+%           (A(x)y'' + B(x)y' + C(x)y = f(x) => {@(x) A(x), ...})
+%       f: cell array conteniendo las funciones del sistema (disparo) o 
+%           función f(x) en una ED no homogénea (dif. finitas)
 %
 % Output:
 %   X: matriz de solución.
