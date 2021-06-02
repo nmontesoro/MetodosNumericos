@@ -65,7 +65,7 @@ function X = ResolverPVF(intervalo, h, cond_frontera, metodo, varargin)
 
         X = disparo();
     case 'dif_finitas'
-        if isnan(coef)
+        if ~isa(coef, 'cell')
             error('Debe especificar coef')
         end
 
@@ -96,31 +96,31 @@ function X = ResolverPVF(intervalo, h, cond_frontera, metodo, varargin)
         X = zeros(n, 2);
         X(:, 1) = [a:h:b].';
         orden = size(coef, 2) - 1;
-                
-        switch orden
-        case 2
-            A = coef(1);
-            B = coef(2);
-            C = coef(3);
-
-            coef = [A / h^2 - B / (2 * h), ...
-                    (-2 * A) / h^2 + C, ...
-                    A / h^2 + B / (2 * h)];
-        otherwise
-            error('No se implementó el orden %d aún', orden)
-        end
 
         mat_A = zeros(n, n);
         mat_A(1, 1) = 1;
         mat_A(n, n) = 1;
 
-        for i = 2:n - orden + 1
-            mat_A(i, i - 1:i + orden - 1) = coef;
+        switch orden
+        case 2
+            for i = 2:n - orden + 1
+                x = X(i, 1);
+                mat_A(i, i - 1) = coef{1}(x) / h ^ 2 - coef{2}(x) / (2 * h);
+                mat_A(i, i) = (-2 * coef{1}(x)) / h ^ 2 + coef{3}(x);
+                mat_A(i, i + 1) = coef{1}(x) / h ^ 2 + coef{2}(x) / (2 * h);
+            end
+        otherwise
+            error('No se implementó el orden %d aún', orden)
         end
 
         mat_b = zeros(n, 1);
         mat_b(1) = cond_frontera(1);
         mat_b(n) = cond_frontera(2);
+
+        if isa(f, 'function_handle')
+            % La ED no es homogénea
+            mat_b(2:n-1) = f(X(2:n-1, 1));
+        end
 
         X(:, 2) = (mat_A \ mat_b);
     end
