@@ -63,8 +63,13 @@ function [T, X, V] = ResolverEDPParabolica(K, h, f0, cond_cont, intervalo_1, ...
             A(n - 2, n - 3) = - a;
             A(n - 2, n - 2) = 2 * a + 1;
 
+            % Asigno los valores a la matriz b
+            b = V(k - 1, 2:n - 1).';
+            b(1) = b(1) + a * cond_cont(1);
+            b(n - 2) = b(n - 2) + a * cond_cont(2);
+
             % Resuelvo el sistema y vuelco a la matriz de resultados
-            V(k, 2:n - 1) = (A \ V(k - 1, 2:n - 1).');
+            V(k, 2:n - 1) = (A \ b);
         end
     end
 
